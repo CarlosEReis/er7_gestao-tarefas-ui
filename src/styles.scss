@@ -1,1 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
+@charset "UTF-8";
+
+@use "primeicons/primeicons.css";
+@use "tailwindcss";
+@plugin "tailwindcss-primeui";
+
+@Layer tailwind, primeui, layer;
+
+html {
+  font-size: 14px;
+}
+
+.p-overlay-mask{
+  backdrop-filter: blur(2px) !important;
+}
