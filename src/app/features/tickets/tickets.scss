@@ -1,0 +1,11 @@
+.centerHeader {
+  text-align: center !important;
+}
+
+.p-badge {
+  color: --cyan-200 !important;
+}
+
+:host ::ng-deep .p-datepicker-dropdown {
+  background-color: var(--p-primary-color) !important;
+}

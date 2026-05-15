@@ -1,0 +1,23 @@
+<router-outlet></router-outlet>
+
+<div class="flex">
+  <div class="grow">
+    <h1 class="text-4xl text-primary-900 font-medium mb-8 ">Listagem de Chamados</h1>
+  </div>
+
+  <p-button class="mr-4" icon="pi pi-plus" [rounded]="true" routerLink="novo"/>
+
+  <div class="flex-row-reverse">
+    <p-fluid>
+      <div class="grid grid-cols-2 gap-4">
+        <p-datepicker class="w-40" [(ngModel)]="dataInicial" [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false" placeholder="Data Inicial"/>
+        <p-datepicker class="w-40" [(ngModel)]="dataFinal" [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false" placeholder="Data Final"/>
+      </div>
+    </p-fluid>
+  </div>
+
+</div>
+
+<div>
+  <app-list [tickets]="tickets()"></app-list>
+</div>
