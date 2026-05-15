@@ -1,0 +1,158 @@
+{
+  "tickets": [
+    {
+      "ticketId": "20260401.T01",
+      "dtAbertura": "2026-04-01",
+      "desenvolvedor": {
+        "nome": "Derek Miller",
+        "foto": "https://avatars.githubusercontent.com/u/265536176?s=64&v=4"
+      },
+      "titulo": "Corrigir login com Google",
+      "projeto": "Teste 01",
+      "tipo": "Bug",
+      "prioridade": "Medium",
+      "status": "Atualizar Homol",
+      "branch": "bugfix/fix-google-login"
+    },
+    {
+      "ticketId": "20260401.T02",
+      "dtAbertura": "2026-04-01",
+      "desenvolvedor": {
+        "nome": "Victor Chen",
+        "foto": "https://avatars.githubusercontent.com/u/202285961?s=64&v=4"
+      },
+      "titulo": "Adicionar exportação CSV no relatório",
+      "projeto": "Teste 01",
+      "tipo": "Feature",
+      "prioridade": "Medium",
+      "status": "Finalizado",
+      "branch": "feature/add-csv-export"
+    },
+    {
+      "ticketId": "20260401.T03",
+      "dtAbertura": "2026-04-01",
+      "desenvolvedor": {
+        "nome": "Gabriel Santos",
+        "foto": "https://avatars.githubusercontent.com/u/237274457?s=64&v=4"
+      },
+      "titulo": "Otimizar query do dashboard",
+      "projeto": "Teste 01",
+      "tipo": "Feature",
+      "prioridade": "Low",
+      "status": "Atualizar Homol",
+      "branch": "feature/optimize-dashboard-query"
+    },
+    {
+      "ticketId": "20260401.T04",
+      "dtAbertura": "2026-04-01",
+      "desenvolvedor": {
+        "nome": "Carlos Dias",
+        "foto": "https://avatars.githubusercontent.com/u/241844841?v=4&size=64"
+      },
+      "titulo": "Erro ao salvar perfil do usuário",
+      "projeto": "Teste 01",
+      "tipo": "Bug",
+      "prioridade": "High",
+      "status": "Finalizado",
+      "branch": "bugfix/user-profile-save-error"
+    },
+    {
+      "ticketId": "20260401.T05",
+      "dtAbertura": "2026-04-01",
+      "desenvolvedor": {
+        "nome": "Derek Miller",
+        "foto": "https://avatars.githubusercontent.com/u/265536176?s=64&v=4"
+      },
+      "titulo": "Refatorar componente de tabela",
+      "projeto": "Teste 01",
+      "tipo": "Feature",
+      "prioridade": "Medium",
+      "status": "Em Andamento",
+      "branch": "refactor/table-component"
+    },
+    {
+      "ticketId": "20260511.T74",
+      "dtAbertura": "2026-05-11",
+      "desenvolvedor": {
+        "nome": "Sofia Costa",
+        "foto": "https://randomuser.me/api/portraits/women/13.jpg"
+      },
+      "titulo": "Desenvolver tela de configurações",
+      "projeto": "Teste 01",
+      "tipo": "Feature",
+      "prioridade": "Medium",
+      "status": "Atualizar Homol",
+      "branch": "feature/settings-screen-dev"
+    },
+    {
+      "ticketId": "20260511.T80",
+      "dtAbertura": "2026-05-11",
+      "desenvolvedor": {
+        "nome": "Derek Miller",
+        "foto": "https://avatars.githubusercontent.com/u/265536176?s=64&v=4"
+      },
+      "titulo": "Implementar cache de dados",
+      "projeto": "Teste 01",
+      "tipo": "Feature",
+      "prioridade": "Medium",
+      "status": "Backlog",
+      "branch": "feature/implement-data-cache"
+    },
+    {
+      "ticketId": "20260511.T56",
+      "dtAbertura": "2026-05-11",
+      "desenvolvedor": {
+        "nome": "Mariana Souza",
+        "foto": "https://randomuser.me/api/portraits/women/3.jpg"
+      },
+      "titulo": "Atualizar documentação técnica",
+      "projeto": "Teste 01",
+      "tipo": "Feature",
+      "prioridade": "Medium",
+      "status": "Backlog",
+      "branch": "documentation/update-tech-docs"
+    },
+    {
+      "ticketId": "20260511.T45",
+      "dtAbertura": "2026-05-11",
+      "desenvolvedor": {
+        "nome": "Victor Chen",
+        "foto": "https://avatars.githubusercontent.com/u/202285961?s=64&v=4"
+      },
+      "titulo": "Criar testes automatizados E2E",
+      "projeto": "Teste 01",
+      "tipo": "Feature",
+      "prioridade": "Medium",
+      "status": "Backlog",
+      "branch": "test/create-e2e-tests"
+    },
+    {
+      "ticketId": "20260511.T97",
+      "dtAbertura": "2026-05-11",
+      "desenvolvedor": {
+        "nome": "Carlos Dias",
+        "foto": "https://avatars.githubusercontent.com/u/241844841?v=4&size=64"
+      },
+      "titulo": "Refatorar módulo de usuários",
+      "projeto": "Teste 01",
+      "tipo": "Feature",
+      "prioridade": "Medium",
+      "status": "Backlog",
+      "branch": "refactor/user-module"
+    },
+    {
+      "ticketId": "20260511.T08",
+      "dtAbertura": "2026-05-11",
+      "desenvolvedor": {
+        "nome": "Sofia Costa",
+        "foto": "https://randomuser.me/api/portraits/women/13.jpg"
+      },
+      "titulo": "Configurar pipeline CI/CD",
+      "projeto": "Teste 01",
+      "tipo": "Feature",
+      "prioridade": "Medium",
+      "status": "Backlog",
+      "branch": "devops/configure-ci-cd"
+    }
+  ]
+}
