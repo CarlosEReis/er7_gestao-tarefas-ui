@@ -1,0 +1,119 @@
+:host ::ng-deep {
+    --sidebar-bg: var(--p-button-primary-background);
+    --sidebar-bg-dark: color-mix(in srgb, var(--sidebar-bg) 85%, black);
+    /* --sidebar-text: var(--text-color, #000000); */
+    /* --sidebar-text-hover: #ffffff; */
+    --sidebar-border: var(--surface-border, rgba(255, 255, 255, 0.1));
+}
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 45px;
+    background: linear-gradient(to left top, var(--p-primary-400), var(--p-primary-500), var(--p-primary-500));
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+    z-index: 1000;
+    overflow: hidden;
+    /* color: var(--surface-900); */
+    border-right: 1px solid transparent;
+}
+
+.sidebar.sidebar-expanded {
+    width: 250px;
+
+    .sidebar-section-title {
+        opacity: 1;
+    }
+}
+
+.sidebar-header {
+    flex-shrink: 0;
+    height: 55px;
+    padding: .7rem .3rem;
+    border-bottom: 1px solid var(--sidebar-border);
+    /* color: var(--sidebar-text); */
+}
+
+.sidebar-menu {
+    padding: 1rem 0;
+}
+
+.sidebar-section-title {
+    /* font-size: 0.75rem; */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    padding: 0 1.25rem;
+    /* color: var(--sidebar-text); */
+    margin: 1rem 0 0.5rem;
+}
+
+.sidebar-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .75rem 1rem;
+    background: transparent;
+    border: none;
+    /* color: var(--sidebar-text); */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    gap: 0.875rem;
+    font-size: inherit;
+}
+
+.sidebar.sidebar-expanded .sidebar-item {
+    justify-content: flex-start;
+}
+
+.sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    /* color: var(--sidebar-text-hover); */
+}
+
+.sidebar-item:active {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.sidebar-item-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+}
+
+.sidebar-item-label {
+    flex: 1;
+    text-align: left;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Scrollbar */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}

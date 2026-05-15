@@ -1,0 +1,41 @@
+<aside
+  class="sidebar"
+  [class.sidebar-expanded]="isExpanded"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()">
+
+  <!-- Header -->
+  <div class="sidebar-header flex align-items-center justify-content-center">
+    <img
+      *ngIf="isExpanded"
+      src="https://er7-finance.vercel.app/f.png"
+      alt="Logo"
+      class="sidebar-logo-full" />
+    <img
+      *ngIf="!isExpanded"
+      src="https://er7-finance.vercel.app/f.png"
+      alt="Logo"
+      class="sidebar-logo-icon" />
+  </div>
+
+  <!-- Menu Content -->
+  <div class="sidebar-menu flex-grow-1 overflow-y-auto">
+    <ng-container *ngFor="let section of menuSections">
+      <!-- Section Title -->
+      <div class="sidebar-section-title ml-3">
+        {{ section.title }}
+      </div>
+
+      <!-- Menu Items -->
+      <div class="sidebar-items">
+        <button
+          *ngFor="let item of section.items"
+          type="button"
+          class="sidebar-item">
+          <i [ngClass]="item.icon" class="sidebar-item-icon"></i>
+          <span class="sidebar-item-label" *ngIf="isExpanded">{{ item.label }}</span>
+        </button>
+      </div>
+    </ng-container>
+  </div>
+</aside>
