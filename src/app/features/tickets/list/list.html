@@ -1,0 +1,38 @@
+<p-table [value]="tickets()" size="small" selectionMode="single">
+  <ng-template #header>
+    <tr>
+      <th style="width:5%">Ticket</th>
+      <th style="width:5%">Abertura</th>
+      <th style="width:3%">Desenv.</th>
+      <th style="width:30%">Título</th>
+      <th>Projeto</th>
+      <th>Tipo</th>
+      <th>Priori</th>
+      <th>Status</th>
+      <th>Branch</th>
+      <th>Ações</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-ticket>
+    <tr>
+      <td>{{ ticket.ticketId }}</td>
+      <td>{{ ticket.dtAbertura }}</td>
+      <td style="text-align: center !important;">
+        <p-avatar [image]="ticket.desenvolvedor.foto" pTooltip="{{ ticket.desenvolvedor.nome }}" shape="circle" style="vertical-align: middle"/>
+      </td>
+      <td>{{ ticket.titulo }}</td>
+      <td>{{ ticket.projeto }}</td>
+      <td>
+        <p-tag [value]="ticket.tipo" [severity]="getSeverityType(ticket.tipo)" />
+      </td>
+      <td>
+        <p-tag [value]="ticket.prioridade" [severity]="getSeverityPriority(ticket.prioridade)" />
+      </td>
+      <td> {{ ticket.status }}</td>
+      <td>{{ ticket.branch }}</td>
+      <td>
+        <p-button icon="pi pi-search"  severity="secondary" rounded />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
