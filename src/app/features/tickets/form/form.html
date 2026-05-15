@@ -1,9 +1,137 @@
 <p-dialog
-  header="Novo ticket"
   [modal]="true"
-  [visible]="true"
-  [style]="{ width: '80rem' }"
-  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  [visible]="visible"
+  [showHeader]="false"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '50rem' }"
+  [breakpoints]="{ '1199px': '84vw', '767px': '96vw' }"
+  [styleClass]="'ticket-form-dialog'"
+  [contentStyle]="{ padding: '0' }"
+  (onHide)="onDialogHide()"
 >
-  <h1>Novo ticket</h1>
+  <form class="ticket-form" (ngSubmit)="salvar()">
+    <div class="ticket-form__topbar">
+      <p-select
+        [options]="colunas"
+        optionLabel="label"
+        optionValue="value"
+        [(ngModel)]="colunaSelecionada"
+        name="colunaSelecionada"
+        class="ticket-form__status-select"
+      />
+
+      <div class="ticket-form__header-actions">
+        <p-button icon="pi pi-image" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Anexar imagem" type="button" />
+        <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Mais opções" type="button" />
+        <p-button icon="pi pi-times" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Fechar" type="button" (onClick)="fechar()" />
+      </div>
+    </div>
+
+    <div class="ticket-form__content">
+      <div class="ticket-form__title-row">
+        <span class="ticket-form__status-circle" aria-hidden="true"></span>
+        <input
+          pInputText
+          [(ngModel)]="titulo"
+          name="titulo"
+          class="ticket-form__title-input"
+          placeholder="Título do ticket"
+        />
+      </div>
+
+      <div class="ticket-form__quick-actions">
+        <p-button icon="pi pi-plus" label="Adicionar" severity="secondary" [outlined]="true" type="button" />
+        <p-button icon="pi pi-clock" label="Datas" severity="secondary" [outlined]="true" type="button" />
+        <p-button icon="pi pi-check-square" label="Checklist" severity="secondary" [outlined]="true" type="button" />
+        <p-button icon="pi pi-users" label="Membros" severity="secondary" [outlined]="true" type="button" />
+      </div>
+
+      <section class="ticket-form__section">
+        <span class="ticket-form__section-label">Etiquetas</span>
+        <div class="ticket-form__labels-input">
+          <input
+            pInputText
+            [(ngModel)]="novaEtiqueta"
+            name="novaEtiqueta"
+            placeholder="Nova etiqueta"
+            (keydown.enter)="$event.preventDefault(); adicionarEtiqueta()"
+          />
+          <p-button icon="pi pi-plus" [outlined]="true" severity="secondary" ariaLabel="Adicionar etiqueta" type="button" (onClick)="adicionarEtiqueta()" />
+        </div>
+
+        <div class="ticket-form__labels-list">
+          @for (etiqueta of etiquetas; track etiqueta) {
+            <p-chip [label]="etiqueta" [removable]="true" (onRemove)="removerEtiqueta(etiqueta)" />
+          }
+        </div>
+      </section>
+
+      <section class="ticket-form__section">
+        <div class="ticket-form__section-header">
+          <div class="ticket-form__section-title">
+            <i class="pi pi-align-left"></i>
+            <span>Descrição</span>
+          </div>
+          <p-button label="Editar" severity="secondary" [outlined]="true" type="button" />
+        </div>
+
+        <textarea
+          pTextarea
+          [(ngModel)]="descricao"
+          name="descricao"
+          class="ticket-form__description"
+          rows="14"
+        ></textarea>
+      </section>
+
+      <section class="ticket-form__meta-grid">
+        <div class="ticket-form__field">
+          <label for="dataInicio">Data inicial</label>
+          <p-datepicker
+            inputId="dataInicio"
+            [showIcon]="true"
+            [showOnFocus]="false"
+            [(ngModel)]="dataInicio"
+            name="dataInicio"
+            class="w-full"
+          />
+        </div>
+
+        <div class="ticket-form__field">
+          <label for="dataFinal">Data final</label>
+          <p-datepicker
+            inputId="dataFinal"
+            [showIcon]="true"
+            [showOnFocus]="false"
+            [(ngModel)]="dataFinal"
+            name="dataFinal"
+            class="w-full"
+          />
+        </div>
+
+        <div class="ticket-form__field ticket-form__field--full">
+          <label for="membros">Membros</label>
+          <p-multiselect
+            inputId="membros"
+            [options]="membrosDisponiveis"
+            optionLabel="nome"
+            optionValue="id"
+            [(ngModel)]="membrosSelecionados"
+            name="membrosSelecionados"
+            placeholder="Selecione membros"
+            [filter]="true"
+            display="chip"
+            class="w-full"
+          />
+        </div>
+      </section>
+    </div>
+
+    <div class="ticket-form__footer">
+      <p-button label="Cancelar" severity="secondary" [outlined]="true" type="button" (onClick)="fechar()" />
+      <p-button label="Salvar ticket" icon="pi pi-check" type="submit" />
+    </div>
+  </form>
 </p-dialog>
