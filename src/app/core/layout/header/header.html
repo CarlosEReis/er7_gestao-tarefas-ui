@@ -1,0 +1,41 @@
+<div class="card">
+    <p-menubar [model]="items" class="header">
+        <ng-template #start>
+        </ng-template>
+
+        <ng-template #item let-item let-root="root">
+        </ng-template>
+
+        <ng-template #end>
+            <div class="flex items-center gap-2">
+
+                <div class="card flex flex-wrap justify-center gap-9 mr-6">
+
+                    <i class="pi pi-{{moonAndSun}}" (click)="toggleDarkMode()" style="font-size: 1.5rem"></i>
+
+                    <p-overlaybadge severity="danger">
+                        <i class="pi pi-bell" style="font-size: 1.5rem"></i>
+                    </p-overlaybadge>
+                    <p-overlaybadge severity="danger" severity="danger">
+                        <i class="pi pi-calendar" style="font-size: 1.5rem"></i>
+                    </p-overlaybadge>
+                    <p-overlaybadge severity="danger">
+                        <i class="pi pi-envelope" style="font-size: 1.5rem"></i>
+                    </p-overlaybadge>
+
+                </div>
+
+                <p-iconfield>
+                    <p-inputicon class="pi pi-search" />
+                    <input type="text" class="rounded-3xl!" pInputText placeholder="Pesquise" />
+                </p-iconfield>
+
+                <p-avatar
+                    size="large"
+                    image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+                    shape="circle"
+                />
+            </div>
+        </ng-template>
+    </p-menubar>
+</div>

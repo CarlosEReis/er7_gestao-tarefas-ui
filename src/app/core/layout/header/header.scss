@@ -1,0 +1,26 @@
+@keyframes bottomBorderAnimation {
+  0% {
+    left: -50px;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+
+
+:host ::ng-deep .header {
+  position: relative;
+  overflow-x: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 1px;
+    width: 1950px;
+    height: 1px;
+    // background: blue;
+    box-shadow: 0 1px 0 var(--p-primary-400);
+    animation: bottomBorderAnimation 20s linear infinite;
+  }
+}
