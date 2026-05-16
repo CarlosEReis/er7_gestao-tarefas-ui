@@ -4,16 +4,18 @@ import { Avatar } from 'primeng/avatar';
 import { Tooltip } from 'primeng/tooltip';
 import { Tag } from 'primeng/tag';
 import { Button } from 'primeng/button';
+import { RouterLink } from '@angular/router';
+import { Ticket } from '../tickets-service';
 
 @Component({
   selector: 'app-list',
-  imports: [TableModule, Avatar, Button, Tooltip, Tag],
+  imports: [TableModule, Avatar, Button, Tooltip, Tag, RouterLink],
   templateUrl: './list.html',
   styleUrl: './list.scss',
 })
 export class List {
 
-  tickets = input<any[]>([]);
+  tickets = input<Ticket[]>([]);
 
   getSeverityPriority(status: string) {
     switch (status) {
