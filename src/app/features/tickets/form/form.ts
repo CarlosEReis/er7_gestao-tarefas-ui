@@ -94,8 +94,7 @@ export class Form implements OnInit {
     novaEtiqueta: this.formBuilder.control(''),
     etiquetas: this.formBuilder.control<string[]>([]),
     descricao: this.formBuilder.control(''),
-    dataInicio: this.formBuilder.control<Date | null>(null),
-    dataFinal: this.formBuilder.control<Date | null>(null),
+    dataRange: this.formBuilder.control<Date[] | null>(null),
     membrosSelecionados: this.formBuilder.control<number[]>([]),
   });
 
@@ -160,6 +159,10 @@ export class Form implements OnInit {
 
   selecionarCorNovaEtiqueta(cor: string): void {
     this.corNovaEtiqueta = cor;
+  }
+
+  limparDatas(): void {
+    this.ticketForm.controls.dataRange.setValue(null);
   }
 
   atualizarBuscaMembros(event: Event): void {
@@ -261,6 +264,21 @@ export class Form implements OnInit {
     return !!valor && !existeNaColecao && !jaSelecionada;
   }
 
+  get temDatasSelecionadas(): boolean {
+    return this.datasSelecionadas.length > 0;
+  }
+
+  get datasSelecionadas(): Date[] {
+    return (this.ticketForm.controls.dataRange.value ?? []).filter((data): data is Date => data instanceof Date);
+  }
+
+  get datasFormatadas(): string {
+    return this.datasSelecionadas
+      .map((data) => this.formatarDataResumo(data))
+      .filter(Boolean)
+      .join(' - ');
+  }
+
   fechar(): void {
     this.visible = false;
   }
@@ -307,8 +325,7 @@ export class Form implements OnInit {
           descricao: ticket.descricao ?? '',
           etiquetas: ticket.etiquetas ?? [],
           colunaSelecionada: this.colunaParaValor(ticket.coluna, ticket.status),
-          dataInicio: this.stringParaData(ticket.dataInicio ?? ticket.dtAbertura),
-          dataFinal: this.stringParaData(ticket.dataFinal ?? null),
+          dataRange: this.montarDataRange(ticket.dataInicio ?? ticket.dtAbertura, ticket.dataFinal ?? null),
           membrosSelecionados: ticket.membros ?? this.mapearMembrosPorNome(ticket.desenvolvedor?.nome),
         });
         this.descricaoHtmlAtual = ticket.descricao ?? '';
@@ -359,8 +376,7 @@ export class Form implements OnInit {
   private montarPayload(tituloLimpo: string): Ticket {
     const agora = new Date();
     const colunaSelecionada = this.ticketForm.controls.colunaSelecionada.value;
-    const dataInicio = this.ticketForm.controls.dataInicio.value;
-    const dataFinal = this.ticketForm.controls.dataFinal.value;
+    const [dataInicio, dataFinal] = this.datasSelecionadas;
     const membrosSelecionados = this.ticketForm.controls.membrosSelecionados.value;
     const etiquetas = this.ticketForm.controls.etiquetas.value;
     const descricao = this.ticketForm.controls.descricao.value.trim();
@@ -449,6 +465,26 @@ export class Form implements OnInit {
     }
 
     return new Date(ano, mes - 1, dia);
+  }
+
+  private montarDataRange(dataInicio: string | null | undefined, dataFinal: string | null | undefined): Date[] | null {
+    const range = [
+      this.stringParaData(dataInicio),
+      this.stringParaData(dataFinal),
+    ].filter((data): data is Date => !!data);
+
+    return range.length ? range : null;
+  }
+
+  private formatarDataResumo(data: Date | null): string {
+    if (!data) {
+      return '';
+    }
+
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+    }).format(data);
   }
 
   private gerarTicketId(baseDate: Date): string {

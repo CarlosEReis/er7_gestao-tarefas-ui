@@ -42,19 +42,21 @@
       </div>
 
       <div class="ticket-form__quick-actions">
-        <p-button icon="pi pi-plus" label="Adicionar" severity="secondary" [outlined]="true" type="button" />
+        <!--<p-button icon="pi pi-plus" label="Adicionar" severity="secondary" [outlined]="true" type="button" /> -->
         @if (!temEtiquetasSelecionadas) {
-          <p-button icon="pi pi-tag" label="Etiquetas" severity="secondary" [outlined]="true" type="button" (onClick)="etiquetasPopover.toggle($event)" />
+          <p-button size="small" icon="pi pi-tag" label="Etiquetas" severity="secondary" [outlined]="true" type="button" (onClick)="etiquetasPopover.toggle($event)" />
         }
-        <p-button icon="pi pi-clock" label="Datas" severity="secondary" [outlined]="true" type="button" />
-        <p-button icon="pi pi-check-square" label="Checklist" severity="secondary" [outlined]="true" type="button" />
+        @if (!temDatasSelecionadas) {
+          <p-button size="small" icon="pi pi-clock" label="Datas" severity="secondary" [outlined]="true" type="button" (onClick)="datasPopover.toggle($event)" />
+        }
+        <p-button size="small" icon="pi pi-check-square" label="Checklist" severity="secondary" [outlined]="true" type="button" />
         @if (!temMembrosSelecionados) {
-          <p-button icon="pi pi-user-plus" label="Membros" severity="secondary" [outlined]="true" type="button" (onClick)="membrosPopover.toggle($event)" />
+          <p-button size="small" icon="pi pi-user-plus" label="Membros" severity="secondary" [outlined]="true" type="button" (onClick)="membrosPopover.toggle($event)" />
         }
-        <p-button icon="pi pi-paperclip" label="Anexo" severity="secondary" [outlined]="true" type="button" />
+        <p-button size="small" icon="pi pi-paperclip" label="Anexo" severity="secondary" [outlined]="true" type="button" />
       </div>
 
-      @if (temMembrosSelecionados || temEtiquetasSelecionadas) {
+      @if (temMembrosSelecionados || temEtiquetasSelecionadas || temDatasSelecionadas) {
         <div class="ticket-form__summaries">
           @if (temMembrosSelecionados) {
             <section class="ticket-form__members-summary" aria-label="Membros selecionados">
@@ -89,9 +91,24 @@
               </div>
             </section>
           }
+
+          @if (temDatasSelecionadas) {
+            <section class="ticket-form__dates-summary" aria-label="Datas selecionadas">
+              <span class="ticket-form__dates-title">Datas</span>
+              <div class="ticket-form__dates-row">
+                <p-chip
+                  [label]="datasFormatadas"
+                  [removable]="true"
+                  (onRemove)="limparDatas()"
+                />
+                <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" severity="secondary" ariaLabel="Adicionar data" type="button" (onClick)="datasPopover.toggle($event)" />
+              </div>
+            </section>
+          }
         </div>
       }
 
+      <div class="ticket-form__popover-hosts">
       <p-popover #membrosPopover styleClass="ticket-form__members-popover">
         <div class="ticket-form__members-popover-content">
           <div class="ticket-form__members-popover-header">
@@ -184,6 +201,37 @@
         </div>
       </p-popover>
 
+      <p-popover #datasPopover styleClass="ticket-form__dates-popover">
+        <div class="ticket-form__dates-popover-content">
+          <div class="ticket-form__members-popover-header">
+            <span>Datas</span>
+            <p-button icon="pi pi-times" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Fechar datas" type="button" (onClick)="datasPopover.hide()" />
+          </div>
+
+          <div class="ticket-form__dates-fields">
+            <div class="ticket-form__field">
+              <label for="dataRangePopover">Período</label>
+              <p-datepicker
+                inputId="dataRangePopover"
+                selectionMode="range"
+                formControlName="dataRange"
+                [showIcon]="true"
+                [showOnFocus]="false"
+                [showClear]="true"
+                [readonlyInput]="true"
+                rangeSeparator=" - "
+                dateFormat="dd/mm/yy"
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <p-button label="Concluir" type="button" (onClick)="datasPopover.hide()" />
+        </div>
+      </p-popover>
+
+      </div>
+
       <section class="ticket-form__section">
         <div class="ticket-form__section-header">
           <div class="ticket-form__section-title">
@@ -218,29 +266,6 @@
       </section>
 
 
-      <section class="ticket-form__meta-grid">
-        <div class="ticket-form__field">
-          <label for="dataInicio">Data inicial</label>
-          <p-datepicker
-            inputId="dataInicio"
-            [showIcon]="true"
-            [showOnFocus]="false"
-            formControlName="dataInicio"
-            class="w-full"
-          />
-        </div>
-
-        <div class="ticket-form__field">
-          <label for="dataFinal">Data final</label>
-          <p-datepicker
-            inputId="dataFinal"
-            [showIcon]="true"
-            [showOnFocus]="false"
-            formControlName="dataFinal"
-            class="w-full"
-          />
-        </div>
-      </section>
     </div>
 
     <div class="ticket-form__footer">
