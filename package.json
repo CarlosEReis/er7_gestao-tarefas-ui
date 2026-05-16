@@ -23,6 +23,7 @@
     "postcss": "^8.5.14",
     "primeicons": "^7.0.0",
     "primeng": "^21.1.7",
+    "quill": "^2.0.3",
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.3.0",
     "tailwindcss-primeui": "^0.6.1",
