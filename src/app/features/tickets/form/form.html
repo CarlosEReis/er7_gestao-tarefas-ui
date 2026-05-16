@@ -11,16 +11,17 @@
   [contentStyle]="{ padding: '0' }"
   (onHide)="onDialogHide()"
 >
-  <form class="ticket-form" (ngSubmit)="salvar()">
+  <form class="ticket-form" [formGroup]="ticketForm" (ngSubmit)="salvar()">
     <div class="ticket-form__topbar">
       <p-select
         [options]="colunas"
         optionLabel="label"
         optionValue="value"
-        [(ngModel)]="colunaSelecionada"
-        name="colunaSelecionada"
+        formControlName="colunaSelecionada"
         class="ticket-form__status-select"
       />
+
+      <span class="ticket-form__ticket-id">{{ ticketIdCabecalho }}</span>
 
       <div class="ticket-form__header-actions">
         <p-button icon="pi pi-image" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Anexar imagem" type="button" />
@@ -34,8 +35,7 @@
         <span class="ticket-form__status-circle" aria-hidden="true"></span>
         <input
           pInputText
-          [(ngModel)]="titulo"
-          name="titulo"
+          formControlName="titulo"
           class="ticket-form__title-input"
           placeholder="Título do ticket"
         />
@@ -45,16 +45,70 @@
         <p-button icon="pi pi-plus" label="Adicionar" severity="secondary" [outlined]="true" type="button" />
         <p-button icon="pi pi-clock" label="Datas" severity="secondary" [outlined]="true" type="button" />
         <p-button icon="pi pi-check-square" label="Checklist" severity="secondary" [outlined]="true" type="button" />
-        <p-button icon="pi pi-users" label="Membros" severity="secondary" [outlined]="true" type="button" />
+        @if (!temMembrosSelecionados) {
+          <p-button icon="pi pi-user-plus" label="Membros" severity="secondary" [outlined]="true" type="button" (onClick)="membrosPopover.toggle($event)" />
+        }
+        <p-button icon="pi pi-paperclip" label="Anexo" severity="secondary" [outlined]="true" type="button" />
       </div>
 
+      @if (temMembrosSelecionados) {
+        <section class="ticket-form__members-summary" aria-label="Membros selecionados">
+          <span class="ticket-form__members-title">Membros</span>
+          <div class="ticket-form__members-row">
+            @for (membro of membrosSelecionados; track membro.id) {
+              <p-avatar
+                [image]="membro.foto"
+                shape="circle"
+                size="large"
+                [ariaLabel]="membro.nome"
+              />
+            }
+            <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" severity="secondary" ariaLabel="Adicionar membro" type="button" (onClick)="membrosPopover.toggle($event)" />
+          </div>
+        </section>
+      }
+
+      <p-popover #membrosPopover styleClass="ticket-form__members-popover">
+        <div class="ticket-form__members-popover-content">
+          <div class="ticket-form__members-popover-header">
+            <span>Membros</span>
+            <p-button icon="pi pi-times" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Fechar membros" type="button" (onClick)="membrosPopover.hide()" />
+          </div>
+
+          <input
+            pInputText
+            class="ticket-form__members-search"
+            placeholder="Pesquisar membros"
+            [value]="termoBuscaMembros"
+            (input)="atualizarBuscaMembros($event)"
+          />
+
+          <span class="ticket-form__members-popover-label">Membros do Quadro</span>
+          <div class="ticket-form__members-options">
+            @for (membro of membrosParaAdicionar; track membro.id) {
+              <button class="ticket-form__member-option" type="button" (click)="adicionarMembro(membro, membrosPopover)">
+                <p-avatar
+                  [image]="membro.foto"
+                  shape="circle"
+                  class="ticket-form__member-avatar"
+                  [ariaLabel]="membro.nome"
+                />
+                <span>{{ membro.nome }}</span>
+              </button>
+            } @empty {
+              <span class="ticket-form__members-empty">Nenhum membro encontrado</span>
+            }
+          </div>
+        </div>
+      </p-popover>
+
+    <!--
       <section class="ticket-form__section">
         <span class="ticket-form__section-label">Etiquetas</span>
         <div class="ticket-form__labels-input">
           <input
             pInputText
-            [(ngModel)]="novaEtiqueta"
-            name="novaEtiqueta"
+            formControlName="novaEtiqueta"
             placeholder="Nova etiqueta"
             (keydown.enter)="$event.preventDefault(); adicionarEtiqueta()"
           />
@@ -62,11 +116,12 @@
         </div>
 
         <div class="ticket-form__labels-list">
-          @for (etiqueta of etiquetas; track etiqueta) {
+          @for (etiqueta of ticketForm.controls.etiquetas.value; track etiqueta) {
             <p-chip [label]="etiqueta" [removable]="true" (onRemove)="removerEtiqueta(etiqueta)" />
           }
         </div>
       </section>
+    -->
 
       <section class="ticket-form__section">
         <div class="ticket-form__section-header">
@@ -74,18 +129,34 @@
             <i class="pi pi-align-left"></i>
             <span>Descrição</span>
           </div>
-          <p-button label="Editar" severity="secondary" [outlined]="true" type="button" />
+          @if (!descricaoEmEdicao) {
+            <p-button label="Editar" severity="secondary" [outlined]="true" type="button" (onClick)="editarDescricao()" />
+          }
         </div>
 
-        <textarea
-          pTextarea
-          [(ngModel)]="descricao"
-          name="descricao"
-          class="ticket-form__description"
-          rows="14"
-        ></textarea>
+        @if (descricaoEmEdicao) {
+          <p-editor
+            formControlName="descricao"
+            class="ticket-form__description-editor"
+            placeholder="Adicione uma descrição"
+            [style]="{ height: '18rem' }"
+            (onTextChange)="onDescricaoTextChange($event)"
+          />
+
+          <div class="ticket-form__description-actions">
+            <div class="ticket-form__description-primary-actions">
+              <p-button label="Salvar" type="button" (onClick)="salvarDescricao()" />
+              @if (isEdicao) {
+                <p-button label="Cancelar" severity="secondary" [text]="true" type="button" (onClick)="cancelarEdicaoDescricao()" />
+              }
+            </div>
+          </div>
+        } @else {
+          <div class="ticket-form__description-view ql-editor" [innerHTML]="descricaoFormatada"></div>
+        }
       </section>
 
+      <!--
       <section class="ticket-form__meta-grid">
         <div class="ticket-form__field">
           <label for="dataInicio">Data inicial</label>
@@ -93,8 +164,7 @@
             inputId="dataInicio"
             [showIcon]="true"
             [showOnFocus]="false"
-            [(ngModel)]="dataInicio"
-            name="dataInicio"
+            formControlName="dataInicio"
             class="w-full"
           />
         </div>
@@ -105,33 +175,23 @@
             inputId="dataFinal"
             [showIcon]="true"
             [showOnFocus]="false"
-            [(ngModel)]="dataFinal"
-            name="dataFinal"
+            formControlName="dataFinal"
             class="w-full"
           />
         </div>
-
-        <div class="ticket-form__field ticket-form__field--full">
-          <label for="membros">Membros</label>
-          <p-multiselect
-            inputId="membros"
-            [options]="membrosDisponiveis"
-            optionLabel="nome"
-            optionValue="id"
-            [(ngModel)]="membrosSelecionados"
-            name="membrosSelecionados"
-            placeholder="Selecione membros"
-            [filter]="true"
-            display="chip"
-            class="w-full"
-          />
-        </div>
-      </section>
+      </section>-->
     </div>
 
+    <!--
     <div class="ticket-form__footer">
       <p-button label="Cancelar" severity="secondary" [outlined]="true" type="button" (onClick)="fechar()" />
-      <p-button label="Salvar ticket" icon="pi pi-check" type="submit" />
-    </div>
+      <p-button
+        [label]="isEdicao ? 'Atualizar ticket' : 'Salvar ticket'"
+        icon="pi pi-check"
+        type="submit"
+        [loading]="salvando"
+        [disabled]="ticketForm.invalid || salvando"
+      />
+    </div> -->
   </form>
 </p-dialog>

@@ -9,9 +9,9 @@
 }
 
 .ticket-form__topbar {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(9rem, 1fr) auto minmax(9rem, 1fr);
   align-items: center;
-  justify-content: space-between;
   gap: 0.75rem;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--p-content-border-color);
@@ -19,12 +19,26 @@
 
 .ticket-form__status-select {
   min-width: 9rem;
+  justify-self: start;
+}
+
+.ticket-form__ticket-id {
+  color: var(--p-text-muted-color);
+  font-size: 0.95rem;
+  font-weight: 600;
+  justify-self: center;
+  letter-spacing: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ticket-form__header-actions {
   display: flex;
   align-items: center;
   gap: 0.2rem;
+  justify-self: end;
 }
 
 .ticket-form__content {
@@ -71,6 +85,94 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.ticket-form__members-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.ticket-form__members-title,
+.ticket-form__members-popover-label {
+  color: var(--p-text-color);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.ticket-form__members-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+:host ::ng-deep .ticket-form__member-avatar.p-avatar {
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+}
+
+:host ::ng-deep .ticket-form__member-avatar .p-avatar-image {
+  object-fit: cover;
+}
+
+:host ::ng-deep .ticket-form__members-popover {
+  width: min(19rem, calc(100vw - 2rem));
+}
+
+.ticket-form__members-popover-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.ticket-form__members-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+  min-height: 2rem;
+  text-align: center;
+}
+
+.ticket-form__members-popover-header span {
+  flex: 1;
+  padding-left: 2rem;
+}
+
+.ticket-form__members-search {
+  width: 100%;
+}
+
+.ticket-form__members-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.ticket-form__member-option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--p-text-color);
+  cursor: pointer;
+  font: inherit;
+  padding: 0.4rem;
+  text-align: left;
+}
+
+.ticket-form__member-option:hover {
+  background: var(--p-content-hover-background);
+}
+
+.ticket-form__members-empty {
+  color: var(--p-text-muted-color);
+  font-size: 0.9rem;
+  padding: 0.35rem 0.4rem;
 }
 
 .ticket-form__section {
@@ -124,8 +226,72 @@
   font-weight: 600;
 }
 
-.ticket-form__description {
+.ticket-form__description-editor,
+.ticket-form__description-view {
   width: 100%;
+}
+
+.ticket-form__description-view {
+  color: var(--p-text-color);
+  font-size: 1rem;
+  line-height: 1.6;
+  min-height: 6rem;
+  overflow: visible;
+  padding: 0;
+}
+
+:host ::ng-deep .ticket-form__description-view > :first-child {
+  margin-top: 0;
+}
+
+:host ::ng-deep .ticket-form__description-view > :last-child {
+  margin-bottom: 0;
+}
+
+:host ::ng-deep .ticket-form__description-view h1,
+:host ::ng-deep .ticket-form__description-view h2,
+:host ::ng-deep .ticket-form__description-view h3 {
+  color: var(--p-text-color);
+  line-height: 1.2;
+  margin: 0 0 0.85rem;
+}
+
+:host ::ng-deep .ticket-form__description-view p {
+  margin: 0 0 0.85rem;
+}
+
+:host ::ng-deep .ticket-form__description-view ul,
+:host ::ng-deep .ticket-form__description-view ol {
+  margin: 0 0 0.85rem;
+  padding-left: 1.5rem;
+}
+
+:host ::ng-deep .ticket-form__description-editor .p-editor-toolbar {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
+
+:host ::ng-deep .ticket-form__description-editor .p-editor-content {
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+:host ::ng-deep .ticket-form__description-editor .ql-editor {
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.ticket-form__description-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+}
+
+.ticket-form__description-primary-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .ticket-form__meta-grid {
@@ -175,5 +341,14 @@
 
   .ticket-form__meta-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ticket-form__description-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ticket-form__description-primary-actions {
+    flex-wrap: wrap;
   }
 }
