@@ -43,6 +43,9 @@
 
       <div class="ticket-form__quick-actions">
         <p-button icon="pi pi-plus" label="Adicionar" severity="secondary" [outlined]="true" type="button" />
+        @if (!temEtiquetasSelecionadas) {
+          <p-button icon="pi pi-tag" label="Etiquetas" severity="secondary" [outlined]="true" type="button" (onClick)="etiquetasPopover.toggle($event)" />
+        }
         <p-button icon="pi pi-clock" label="Datas" severity="secondary" [outlined]="true" type="button" />
         <p-button icon="pi pi-check-square" label="Checklist" severity="secondary" [outlined]="true" type="button" />
         @if (!temMembrosSelecionados) {
@@ -51,21 +54,42 @@
         <p-button icon="pi pi-paperclip" label="Anexo" severity="secondary" [outlined]="true" type="button" />
       </div>
 
-      @if (temMembrosSelecionados) {
-        <section class="ticket-form__members-summary" aria-label="Membros selecionados">
-          <span class="ticket-form__members-title">Membros</span>
-          <div class="ticket-form__members-row">
-            @for (membro of membrosSelecionados; track membro.id) {
-              <p-avatar
-                [image]="membro.foto"
-                shape="circle"
-                size="large"
-                [ariaLabel]="membro.nome"
-              />
-            }
-            <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" severity="secondary" ariaLabel="Adicionar membro" type="button" (onClick)="membrosPopover.toggle($event)" />
-          </div>
-        </section>
+      @if (temMembrosSelecionados || temEtiquetasSelecionadas) {
+        <div class="ticket-form__summaries">
+          @if (temMembrosSelecionados) {
+            <section class="ticket-form__members-summary" aria-label="Membros selecionados">
+              <span class="ticket-form__members-title">Membros</span>
+              <div class="ticket-form__members-row">
+                @for (membro of membrosSelecionados; track membro.id) {
+                  <p-avatar
+                    [image]="membro.foto"
+                    shape="circle"
+                    size="large"
+                    [ariaLabel]="membro.nome"
+                  />
+                }
+                <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" severity="secondary" ariaLabel="Adicionar membro" type="button" (onClick)="membrosPopover.toggle($event)" />
+              </div>
+            </section>
+          }
+
+          @if (temEtiquetasSelecionadas) {
+            <section class="ticket-form__labels-summary" aria-label="Etiquetas selecionadas">
+              <span class="ticket-form__labels-title">Etiquetas</span>
+              <div class="ticket-form__labels-row">
+                @for (etiqueta of etiquetasSelecionadas; track etiqueta.nome) {
+                  <p-chip
+                    [label]="etiqueta.nome"
+                    [removable]="true"
+                    [style]="{ 'background-color': etiqueta.cor }"
+                    (onRemove)="removerEtiqueta(etiqueta.nome)"
+                  />
+                }
+                <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" severity="secondary" ariaLabel="Adicionar etiqueta" type="button" (onClick)="etiquetasPopover.toggle($event)" />
+              </div>
+            </section>
+          }
+        </div>
       }
 
       <p-popover #membrosPopover styleClass="ticket-form__members-popover">
@@ -102,26 +126,63 @@
         </div>
       </p-popover>
 
-    <!--
-      <section class="ticket-form__section">
-        <span class="ticket-form__section-label">Etiquetas</span>
-        <div class="ticket-form__labels-input">
+      <p-popover #etiquetasPopover styleClass="ticket-form__labels-popover">
+        <div class="ticket-form__labels-popover-content">
+          <div class="ticket-form__members-popover-header">
+            <span>Etiquetas</span>
+            <p-button icon="pi pi-times" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Fechar etiquetas" type="button" (onClick)="etiquetasPopover.hide()" />
+          </div>
+
           <input
             pInputText
-            formControlName="novaEtiqueta"
-            placeholder="Nova etiqueta"
+            class="ticket-form__members-search"
+            placeholder="Buscar etiquetas"
+            [value]="termoBuscaEtiquetas"
+            (input)="atualizarBuscaEtiquetas($event)"
             (keydown.enter)="$event.preventDefault(); adicionarEtiqueta()"
           />
-          <p-button icon="pi pi-plus" [outlined]="true" severity="secondary" ariaLabel="Adicionar etiqueta" type="button" (onClick)="adicionarEtiqueta()" />
-        </div>
 
-        <div class="ticket-form__labels-list">
-          @for (etiqueta of ticketForm.controls.etiquetas.value; track etiqueta) {
-            <p-chip [label]="etiqueta" [removable]="true" (onRemove)="removerEtiqueta(etiqueta)" />
-          }
+          <span class="ticket-form__members-popover-label">Etiquetas</span>
+          <div class="ticket-form__labels-options">
+            @for (etiqueta of etiquetasParaAdicionar; track etiqueta.id) {
+              <button class="ticket-form__label-option" type="button" (click)="selecionarEtiqueta(etiqueta, etiquetasPopover)">
+                <span class="ticket-form__label-check" aria-hidden="true"></span>
+                <span class="ticket-form__label-color" [style.background-color]="etiqueta.cor">
+                  {{ etiqueta.nome }}
+                </span>
+              </button>
+            } @empty {
+              <span class="ticket-form__members-empty">Nenhuma etiqueta encontrada</span>
+            }
+          </div>
+
+          <div class="ticket-form__label-create">
+            <span class="ticket-form__members-popover-label">Criar etiqueta</span>
+            <div class="ticket-form__label-color-picker" aria-label="Selecionar cor da etiqueta">
+              @for (cor of coresEtiquetas; track cor) {
+                <button
+                  class="ticket-form__label-color-swatch"
+                  type="button"
+                  [class.ticket-form__label-color-swatch--selected]="corNovaEtiqueta === cor"
+                  [style.background-color]="cor"
+                  (click)="selecionarCorNovaEtiqueta(cor)"
+                  [attr.aria-label]="'Selecionar cor ' + cor"
+                ></button>
+              }
+            </div>
+            <p-button
+              label="Criar nova etiqueta"
+              icon="pi pi-plus"
+              severity="secondary"
+              [outlined]="true"
+              type="button"
+              [loading]="criandoEtiqueta"
+              [disabled]="!podeCriarEtiqueta || criandoEtiqueta"
+              (onClick)="adicionarEtiqueta()"
+            />
+          </div>
         </div>
-      </section>
-    -->
+      </p-popover>
 
       <section class="ticket-form__section">
         <div class="ticket-form__section-header">
@@ -156,7 +217,7 @@
         }
       </section>
 
-      <!--
+
       <section class="ticket-form__meta-grid">
         <div class="ticket-form__field">
           <label for="dataInicio">Data inicial</label>
@@ -179,10 +240,9 @@
             class="w-full"
           />
         </div>
-      </section>-->
+      </section>
     </div>
 
-    <!--
     <div class="ticket-form__footer">
       <p-button label="Cancelar" severity="secondary" [outlined]="true" type="button" (onClick)="fechar()" />
       <p-button
@@ -192,6 +252,6 @@
         [loading]="salvando"
         [disabled]="ticketForm.invalid || salvando"
       />
-    </div> -->
+    </div>
   </form>
 </p-dialog>

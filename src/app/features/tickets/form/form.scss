@@ -87,6 +87,13 @@
   gap: 0.5rem;
 }
 
+.ticket-form__summaries {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
 .ticket-form__members-summary {
   display: flex;
   flex-direction: column;
@@ -94,15 +101,23 @@
 }
 
 .ticket-form__members-title,
+.ticket-form__labels-title,
 .ticket-form__members-popover-label {
   color: var(--p-text-color);
   font-size: 0.9rem;
   font-weight: 700;
 }
 
-.ticket-form__members-row {
+.ticket-form__members-row,
+.ticket-form__labels-row {
   display: flex;
   align-items: center;
+  gap: 0.45rem;
+}
+
+.ticket-form__labels-summary {
+  display: flex;
+  flex-direction: column;
   gap: 0.45rem;
 }
 
@@ -120,7 +135,12 @@
   width: min(19rem, calc(100vw - 2rem));
 }
 
-.ticket-form__members-popover-content {
+:host ::ng-deep .ticket-form__labels-popover {
+  width: min(22rem, calc(100vw - 2rem));
+}
+
+.ticket-form__members-popover-content,
+.ticket-form__labels-popover-content {
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
@@ -150,6 +170,12 @@
   gap: 0.2rem;
 }
 
+.ticket-form__labels-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
 .ticket-form__member-option {
   display: flex;
   align-items: center;
@@ -175,40 +201,79 @@
   padding: 0.35rem 0.4rem;
 }
 
+.ticket-form__label-option {
+  display: grid;
+  grid-template-columns: 1.15rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-align: left;
+}
+
+.ticket-form__label-check {
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 0.125rem;
+  background: var(--p-content-background);
+}
+
+.ticket-form__label-color {
+  min-height: 2rem;
+  border-radius: 0.25rem;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  padding: 0.35rem 0.75rem;
+}
+
+.ticket-form__label-option:hover .ticket-form__label-color {
+  filter: brightness(0.95);
+}
+
+.ticket-form__label-create {
+  border-top: 1px solid var(--p-content-border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 0.85rem;
+}
+
+.ticket-form__label-color-picker {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.ticket-form__label-color-swatch {
+  aspect-ratio: 1.7;
+  border: 1px solid color-mix(in srgb, #000 14%, transparent);
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.ticket-form__label-color-swatch--selected {
+  box-shadow: 0 0 0 2px var(--p-content-background), 0 0 0 4px var(--p-primary-color);
+}
+
 .ticket-form__section {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.ticket-form__section-label {
-  font-weight: 600;
-  color: var(--p-text-muted-color);
-}
-
-.ticket-form__labels-input {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.ticket-form__labels-input input {
-  width: min(100%, 20rem);
-}
-
-.ticket-form__labels-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-:host ::ng-deep .ticket-form__labels-list .p-chip {
-  background: #f59e0b;
+:host ::ng-deep .ticket-form__labels-row .p-chip {
   color: #111827;
   font-weight: 600;
 }
 
-:host ::ng-deep .ticket-form__labels-list .p-chip .p-chip-remove-icon {
+:host ::ng-deep .ticket-form__labels-row .p-chip .p-chip-remove-icon {
   color: #111827;
 }
 

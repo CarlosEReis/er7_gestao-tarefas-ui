@@ -12,6 +12,7 @@ import { InputText } from 'primeng/inputtext';
 import { Popover, PopoverModule } from 'primeng/popover';
 import { Select } from 'primeng/select';
 import { EditorTextChangeEvent } from 'primeng/types/editor';
+import { Etiqueta, EtiquetasService } from '../etiquetas-service';
 import { TicketsService, Ticket } from '../tickets-service';
 import { Usuario, UsuariosService } from '../usuarios-service';
 
@@ -50,6 +51,7 @@ export class Form implements OnInit {
   private readonly sanitizer = inject(DomSanitizer);
   private readonly ticketsService = inject(TicketsService);
   private readonly usuariosService = inject(UsuariosService);
+  private readonly etiquetasService = inject(EtiquetasService);
   private readonly formBuilder = inject(NonNullableFormBuilder);
 
   visible = true;
@@ -57,6 +59,8 @@ export class Form implements OnInit {
   isEdicao = false;
   descricaoEmEdicao = true;
   termoBuscaMembros = '';
+  termoBuscaEtiquetas = '';
+  criandoEtiqueta = false;
   private descricaoAntesEdicao = '';
   private descricaoHtmlAtual = '';
 
@@ -67,6 +71,20 @@ export class Form implements OnInit {
     { label: 'Concluído', value: 'concluido' },
   ];
   membrosDisponiveis: Member[] = [];
+  etiquetasDisponiveis: Etiqueta[] = [];
+  coresEtiquetas = [
+    '#f87171',
+    '#fb923c',
+    '#facc15',
+    '#4ade80',
+    '#2dd4bf',
+    '#38bdf8',
+    '#60a5fa',
+    '#a78bfa',
+    '#c084fc',
+    '#f472b6',
+  ];
+  corNovaEtiqueta = this.coresEtiquetas[0];
 
   ticketForm = this.formBuilder.group({
     colunaSelecionada: this.formBuilder.control('backlog'),
@@ -85,6 +103,7 @@ export class Form implements OnInit {
 
   ngOnInit(): void {
     this.carregarUsuarios();
+    this.carregarEtiquetas();
 
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
@@ -97,21 +116,33 @@ export class Form implements OnInit {
   }
 
   adicionarEtiqueta(): void {
-    const valor = this.ticketForm.controls.novaEtiqueta.value.trim();
+    const valor = this.ticketForm.controls.novaEtiqueta.value.trim() || this.termoBuscaEtiquetas.trim();
 
     if (!valor) {
       return;
     }
 
-    const etiquetasAtuais = this.ticketForm.controls.etiquetas.value;
-    const etiquetaJaExiste = etiquetasAtuais.some((etiqueta) => etiqueta.toLowerCase() === valor.toLowerCase());
-    if (etiquetaJaExiste) {
-      this.ticketForm.controls.novaEtiqueta.setValue('');
+    const etiquetaExistente = this.etiquetasDisponiveis.find((etiqueta) => this.etiquetasIguais(etiqueta.nome, valor));
+    if (etiquetaExistente) {
+      this.selecionarEtiqueta(etiquetaExistente);
       return;
     }
 
-    this.ticketForm.controls.etiquetas.setValue([...etiquetasAtuais, valor]);
-    this.ticketForm.controls.novaEtiqueta.setValue('');
+    this.criarEtiqueta(valor);
+  }
+
+  selecionarEtiqueta(etiqueta: Etiqueta, popover?: Popover): void {
+    const etiquetasAtuais = this.ticketForm.controls.etiquetas.value;
+    const etiquetaJaExiste = etiquetasAtuais.some((etiquetaAtual) => this.etiquetasIguais(etiquetaAtual, etiqueta.nome));
+    if (etiquetaJaExiste) {
+      this.limparNovaEtiqueta();
+      popover?.hide();
+      return;
+    }
+
+    this.ticketForm.controls.etiquetas.setValue([...etiquetasAtuais, etiqueta.nome]);
+    this.limparNovaEtiqueta();
+    popover?.hide();
   }
 
   removerEtiqueta(etiquetaRemover: string): void {
@@ -119,6 +150,16 @@ export class Form implements OnInit {
       .filter((etiqueta) => etiqueta !== etiquetaRemover);
 
     this.ticketForm.controls.etiquetas.setValue(etiquetasAtualizadas);
+  }
+
+  atualizarBuscaEtiquetas(event: Event): void {
+    const valor = (event.target as HTMLInputElement).value;
+    this.termoBuscaEtiquetas = valor;
+    this.ticketForm.controls.novaEtiqueta.setValue(valor);
+  }
+
+  selecionarCorNovaEtiqueta(cor: string): void {
+    this.corNovaEtiqueta = cor;
   }
 
   atualizarBuscaMembros(event: Event): void {
@@ -187,6 +228,39 @@ export class Form implements OnInit {
     return this.membrosSelecionados.length > 0;
   }
 
+  get etiquetasSelecionadas(): Etiqueta[] {
+    return this.ticketForm.controls.etiquetas.value.map((nome) => (
+      this.etiquetasDisponiveis.find((etiqueta) => this.etiquetasIguais(etiqueta.nome, nome)) ?? {
+        id: nome,
+        nome,
+        cor: '#f59e0b',
+      }
+    ));
+  }
+
+  get etiquetasParaAdicionar(): Etiqueta[] {
+    const etiquetasSelecionadas = this.ticketForm.controls.etiquetas.value;
+    const busca = this.termoBuscaEtiquetas.trim().toLowerCase();
+
+    return this.etiquetasDisponiveis.filter((etiqueta) => {
+      const aindaNaoSelecionada = !etiquetasSelecionadas.some((nome) => this.etiquetasIguais(nome, etiqueta.nome));
+      const correspondeBusca = !busca || etiqueta.nome.toLowerCase().includes(busca);
+      return aindaNaoSelecionada && correspondeBusca;
+    });
+  }
+
+  get temEtiquetasSelecionadas(): boolean {
+    return this.etiquetasSelecionadas.length > 0;
+  }
+
+  get podeCriarEtiqueta(): boolean {
+    const valor = this.ticketForm.controls.novaEtiqueta.value.trim();
+    const existeNaColecao = this.etiquetasDisponiveis.some((etiqueta) => this.etiquetasIguais(etiqueta.nome, valor));
+    const jaSelecionada = this.ticketForm.controls.etiquetas.value.some((etiqueta) => this.etiquetasIguais(etiqueta, valor));
+
+    return !!valor && !existeNaColecao && !jaSelecionada;
+  }
+
   fechar(): void {
     this.visible = false;
   }
@@ -249,6 +323,35 @@ export class Form implements OnInit {
     this.usuariosService.buscarUsuarios().subscribe({
       next: (usuarios) => {
         this.membrosDisponiveis = usuarios;
+      },
+    });
+  }
+
+  private carregarEtiquetas(): void {
+    this.etiquetasService.buscarEtiquetas().subscribe({
+      next: (etiquetas) => {
+        this.etiquetasDisponiveis = etiquetas;
+      },
+    });
+  }
+
+  private criarEtiqueta(nome: string): void {
+    if (this.criandoEtiqueta) {
+      return;
+    }
+
+    this.criandoEtiqueta = true;
+    this.etiquetasService.criarEtiqueta({
+      nome,
+      cor: this.corNovaEtiqueta,
+    }).subscribe({
+      next: (etiqueta) => {
+        this.etiquetasDisponiveis = [...this.etiquetasDisponiveis, etiqueta];
+        this.selecionarEtiqueta(etiqueta);
+        this.criandoEtiqueta = false;
+      },
+      error: () => {
+        this.criandoEtiqueta = false;
       },
     });
   }
@@ -400,6 +503,16 @@ export class Form implements OnInit {
 
     const membro = this.membrosDisponiveis.find((item) => item.nome === nome);
     return membro ? [membro.id] : [];
+  }
+
+  private limparNovaEtiqueta(): void {
+    this.ticketForm.controls.novaEtiqueta.setValue('');
+    this.termoBuscaEtiquetas = '';
+    this.corNovaEtiqueta = this.coresEtiquetas[0];
+  }
+
+  private etiquetasIguais(primeira: string, segunda: string): boolean {
+    return primeira.trim().toLowerCase() === segunda.trim().toLowerCase();
   }
 
   private textoObrigatorioSemEspacos(control: AbstractControl<string>): ValidationErrors | null {
