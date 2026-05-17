@@ -374,11 +374,6 @@
   font-weight: 600;
 }
 
-.ticket-form__description-editor,
-.ticket-form__description-view {
-  width: 100%;
-}
-
 .ticket-form__description-view {
   color: var(--p-text-color);
   font-size: 1.1rem;
@@ -406,6 +401,14 @@
 
 :host ::ng-deep .ticket-form__description-view p {
   margin: 0 0 0.85rem;
+}
+
+:host ::ng-deep .ticket-form__description-view h1 {
+  font-size: 2em;
+}
+
+:host ::ng-deep .ticket-form__description-view h2 {
+  font-size: 1.5em;
 }
 
 :host ::ng-deep .ticket-form__description-view ul,
