@@ -158,7 +158,8 @@
 
 .ticket-form__members-popover-content,
 .ticket-form__labels-popover-content,
-.ticket-form__dates-popover-content {
+.ticket-form__dates-popover-content,
+.ticket-form__checklist-popover-content {
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
@@ -284,6 +285,58 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.ticket-form__checklist-header {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.ticket-form__checklist-actions {
+  align-items: center;
+  display: flex;
+  gap: 0.45rem;
+}
+
+.ticket-form__checklist-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.ticket-form__checklist-item {
+  align-items: center;
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.ticket-form__checklist-add-spacer {
+  width: 1rem;
+}
+
+.ticket-form__checklist-inplace-content {
+  align-items: center;
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  width: 100%;
+}
+
+.ticket-form__checklist-inplace-content input {
+  width: 100%;
+}
+
+:host ::ng-deep .ticket-form__checklist-item-inplace,
+:host ::ng-deep .ticket-form__checklist-item-inplace .p-inplace-display {
+  overflow-wrap: anywhere;
+  width: 100%;
+}
+
+.ticket-form__checklist-item-label--checked {
+  text-decoration: line-through;
 }
 
 :host ::ng-deep .ticket-form__labels-row .p-chip {

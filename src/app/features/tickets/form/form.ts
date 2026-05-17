@@ -1,19 +1,24 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AbstractControl, ReactiveFormsModule, ValidationErrors, Validators, NonNullableFormBuilder } from '@angular/forms';
+import { AbstractControl, FormsModule, ReactiveFormsModule, ValidationErrors, Validators, NonNullableFormBuilder } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AvatarModule } from 'primeng/avatar';
 import { Button } from 'primeng/button';
+import { AutoFocus } from 'primeng/autofocus';
+import { CheckboxModule } from 'primeng/checkbox';
 import { Chip } from 'primeng/chip';
 import { DatePicker } from 'primeng/datepicker';
 import { Dialog } from 'primeng/dialog';
 import { EditorModule } from 'primeng/editor';
+import { InplaceModule } from 'primeng/inplace';
 import { InputText } from 'primeng/inputtext';
 import { Popover, PopoverModule } from 'primeng/popover';
+import { ProgressBarModule } from 'primeng/progressbar';
 import { Select } from 'primeng/select';
+import { TooltipModule } from 'primeng/tooltip';
 import { EditorTextChangeEvent } from 'primeng/types/editor';
 import { Etiqueta, EtiquetasService } from '../etiquetas-service';
-import { TicketsService, Ticket } from '../tickets-service';
+import { TicketsService, Ticket, TicketChecklist, TicketChecklistItem } from '../tickets-service';
 import { Usuario, UsuariosService } from '../usuarios-service';
 
 type Option = {
@@ -31,15 +36,21 @@ type Member = {
   selector: 'app-form',
   imports: [
     AvatarModule,
+    AutoFocus,
     Button,
+    CheckboxModule,
     Chip,
     DatePicker,
     Dialog,
     EditorModule,
+    FormsModule,
+    InplaceModule,
     ReactiveFormsModule,
     InputText,
     PopoverModule,
-    Select
+    ProgressBarModule,
+    Select,
+    TooltipModule
   ],
   templateUrl: './form.html',
   styleUrl: './form.scss',
@@ -60,6 +71,14 @@ export class Form implements OnInit {
   descricaoEmEdicao = true;
   termoBuscaMembros = '';
   termoBuscaEtiquetas = '';
+  checklist: TicketChecklist | null = null;
+  tituloNovoChecklist = '';
+  textoNovoItemChecklist = '';
+  itemChecklistEmEdicaoId: string | null = null;
+  textoEdicaoItemChecklist = '';
+  adicionandoItemChecklist = false;
+  ocultarItensConcluidos = false;
+  private checklistPersistido = false;
   criandoEtiqueta = false;
   private descricaoAntesEdicao = '';
   private descricaoHtmlAtual = '';
@@ -128,6 +147,129 @@ export class Form implements OnInit {
     }
 
     this.criarEtiqueta(valor);
+  }
+
+  atualizarTituloNovoChecklist(event: Event): void {
+    this.tituloNovoChecklist = (event.target as HTMLInputElement).value;
+  }
+
+  criarChecklist(popover?: Popover): void {
+    const titulo = this.tituloNovoChecklist.trim();
+    if (!titulo) {
+      return;
+    }
+
+    this.checklist = {
+      id: this.gerarIdLocal('checklist'),
+      ticketId: this.ticketOriginal?.id ?? '',
+      titulo,
+      itens: [],
+    };
+    this.checklistPersistido = false;
+    this.tituloNovoChecklist = '';
+    this.adicionandoItemChecklist = true;
+    popover?.hide();
+    this.persistirChecklistAtual();
+  }
+
+  excluirChecklist(): void {
+    const checklistId = this.checklist?.id;
+    const deveExcluirChecklistPersistido = this.isEdicao && this.checklistPersistido && !!checklistId;
+
+    this.checklist = null;
+    this.checklistPersistido = false;
+    this.tituloNovoChecklist = '';
+    this.textoNovoItemChecklist = '';
+    this.itemChecklistEmEdicaoId = null;
+    this.textoEdicaoItemChecklist = '';
+    this.adicionandoItemChecklist = false;
+    this.ocultarItensConcluidos = false;
+
+    if (deveExcluirChecklistPersistido) {
+      this.ticketsService.excluirChecklist(checklistId).subscribe();
+    }
+  }
+
+  abrirAdicaoItemChecklist(): void {
+    this.adicionandoItemChecklist = true;
+  }
+
+  atualizarTextoNovoItemChecklist(event: Event): void {
+    this.textoNovoItemChecklist = (event.target as HTMLInputElement).value;
+  }
+
+  adicionarItemChecklist(event?: Event, closeCallback?: (event: Event) => void): void {
+    const texto = this.textoNovoItemChecklist.trim();
+    if (!this.checklist || !texto) {
+      return;
+    }
+
+    this.checklist = {
+      ...this.checklist,
+      itens: [
+        ...this.checklist.itens,
+        {
+          id: this.gerarIdLocal('item'),
+          texto,
+          concluido: false,
+        },
+      ],
+    };
+    this.textoNovoItemChecklist = '';
+    this.adicionandoItemChecklist = false;
+    closeCallback?.(event ?? new Event('click'));
+    this.persistirChecklistAtual();
+  }
+
+  cancelarAdicaoItemChecklist(event?: Event, closeCallback?: (event: Event) => void): void {
+    this.textoNovoItemChecklist = '';
+    this.adicionandoItemChecklist = false;
+    closeCallback?.(event ?? new Event('click'));
+  }
+
+  alternarItemChecklist(item: TicketChecklistItem, concluido: boolean): void {
+    if (!this.checklist) {
+      return;
+    }
+
+    this.checklist = {
+      ...this.checklist,
+      itens: this.checklist.itens.map((itemAtual) => (
+        itemAtual.id === item.id ? { ...itemAtual, concluido } : itemAtual
+      )),
+    };
+    this.persistirChecklistAtual();
+  }
+
+  iniciarEdicaoItemChecklist(item: TicketChecklistItem): void {
+    this.itemChecklistEmEdicaoId = item.id;
+    this.textoEdicaoItemChecklist = item.texto;
+  }
+
+  atualizarTextoEdicaoItemChecklist(event: Event): void {
+    this.textoEdicaoItemChecklist = (event.target as HTMLInputElement).value;
+  }
+
+  salvarEdicaoItemChecklist(item: TicketChecklistItem, event?: Event, closeCallback?: (event: Event) => void): void {
+    const texto = this.textoEdicaoItemChecklist.trim();
+    if (!this.checklist || !texto) {
+      return;
+    }
+
+    this.checklist = {
+      ...this.checklist,
+      itens: this.checklist.itens.map((itemAtual) => (
+        itemAtual.id === item.id ? { ...itemAtual, texto } : itemAtual
+      )),
+    };
+    this.limparEdicaoItemChecklist();
+    closeCallback?.(event ?? new Event('click'));
+    this.persistirChecklistAtual();
+  }
+
+  cancelarEdicaoItemChecklist(event?: Event, closeCallback?: (event: Event) => void): void {
+    this.limparEdicaoItemChecklist();
+    closeCallback?.(event ?? new Event('click'));
   }
 
   selecionarEtiqueta(etiqueta: Etiqueta, popover?: Popover): void {
@@ -264,6 +406,37 @@ export class Form implements OnInit {
     return !!valor && !existeNaColecao && !jaSelecionada;
   }
 
+  get temChecklist(): boolean {
+    return !!this.checklist;
+  }
+
+  get podeCriarChecklist(): boolean {
+    return !!this.tituloNovoChecklist.trim();
+  }
+
+  get podeAdicionarItemChecklist(): boolean {
+    return !!this.textoNovoItemChecklist.trim();
+  }
+
+  get itensChecklistVisiveis(): TicketChecklistItem[] {
+    const itens = this.checklist?.itens ?? [];
+    return this.ocultarItensConcluidos ? itens.filter((item) => !item.concluido) : itens;
+  }
+
+  get percentualChecklist(): number {
+    const itens = this.checklist?.itens ?? [];
+    if (!itens.length) {
+      return 0;
+    }
+
+    const concluidos = itens.filter((item) => item.concluido).length;
+    return Math.round((concluidos / itens.length) * 100);
+  }
+
+  get temItensChecklistConcluidos(): boolean {
+    return (this.checklist?.itens ?? []).some((item) => item.concluido);
+  }
+
   get temDatasSelecionadas(): boolean {
     return this.datasSelecionadas.length > 0;
   }
@@ -309,7 +482,10 @@ export class Form implements OnInit {
       : this.ticketsService.criarTicket(payload);
 
     requisicao$.subscribe({
-      next: () => this.fechar(),
+      next: (ticketSalvo) => {
+        this.ticketOriginal = ticketSalvo;
+        this.persistirChecklistAposSalvar(ticketSalvo, () => this.fechar());
+      },
       error: () => {
         this.salvando = false;
       },
@@ -329,6 +505,7 @@ export class Form implements OnInit {
           membrosSelecionados: ticket.membros ?? this.mapearMembrosPorNome(ticket.desenvolvedor?.nome),
         });
         this.descricaoHtmlAtual = ticket.descricao ?? '';
+        this.carregarChecklist(ticket.id);
       },
       error: () => {
         void this.router.navigate(['/tickets']);
@@ -403,6 +580,64 @@ export class Form implements OnInit {
       membros: [...membrosSelecionados],
       coluna: colunaSelecionada,
     };
+  }
+
+  private carregarChecklist(ticketId: string): void {
+    this.ticketsService.buscarChecklistPorTicketId(ticketId).subscribe({
+      next: (checklist) => {
+        this.checklist = checklist;
+        this.checklistPersistido = !!checklist;
+      },
+    });
+  }
+
+  private persistirChecklistAtual(): void {
+    if (!this.isEdicao || !this.ticketOriginal || !this.checklist) {
+      return;
+    }
+
+    const checklist: TicketChecklist = {
+      ...this.checklist,
+      ticketId: this.ticketOriginal.id,
+      itens: [...this.checklist.itens],
+    };
+    const requisicao$ = this.checklistPersistido
+      ? this.ticketsService.atualizarChecklist(checklist)
+      : this.ticketsService.criarChecklist(checklist);
+
+    requisicao$.subscribe({
+      next: (checklistSalvo) => {
+        this.checklist = checklistSalvo;
+        this.checklistPersistido = true;
+      },
+    });
+  }
+
+  private persistirChecklistAposSalvar(ticket: Ticket, onComplete: () => void): void {
+    if (!this.checklist) {
+      onComplete();
+      return;
+    }
+
+    const checklist: TicketChecklist = {
+      ...this.checklist,
+      ticketId: ticket.id,
+      itens: [...this.checklist.itens],
+    };
+    const requisicao$ = this.checklistPersistido
+      ? this.ticketsService.atualizarChecklist(checklist)
+      : this.ticketsService.criarChecklist(checklist);
+
+    requisicao$.subscribe({
+      next: (checklistSalvo) => {
+        this.checklist = checklistSalvo;
+        this.checklistPersistido = true;
+        onComplete();
+      },
+      error: () => {
+        this.salvando = false;
+      },
+    });
   }
 
   private aplicarDescricaoEditada(): void {
@@ -505,6 +740,16 @@ export class Form implements OnInit {
       .replace(/(^-|-$)/g, '');
 
     return `feature/${slug || 'novo-ticket'}`;
+  }
+
+  private gerarIdLocal(prefixo: string): string {
+    const sufixo = Math.random().toString(36).slice(2, 9);
+    return `${prefixo}-${Date.now()}-${sufixo}`;
+  }
+
+  private limparEdicaoItemChecklist(): void {
+    this.itemChecklistEmEdicaoId = null;
+    this.textoEdicaoItemChecklist = '';
   }
 
   private membroPadrao(): { nome: string; foto: string } {

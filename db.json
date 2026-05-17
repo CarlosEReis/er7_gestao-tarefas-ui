@@ -301,5 +301,39 @@
       "id": "xg0F6Ecc9Z0"
     }
   ],
+  "checklists": [
+    {
+      "id": "MJAievVkO4w",
+      "ticketId": "20260401.T01",
+      "titulo": "teste",
+      "itens": [
+        {
+          "id": "item-1778978050407-wuw4u6c",
+          "texto": "teste 01",
+          "concluido": false
+        },
+        {
+          "id": "item-1778978059315-qkmjjj4",
+          "texto": "Teste 02",
+          "concluido": false
+        },
+        {
+          "id": "item-1778978065095-forfqha",
+          "texto": "Teste 03",
+          "concluido": false
+        },
+        {
+          "id": "item-1778978134077-r24s6qc",
+          "texto": "teste",
+          "concluido": false
+        },
+        {
+          "id": "item-1778978234669-0g32tol",
+          "texto": "teste 04",
+          "concluido": true
+        }
+      ]
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

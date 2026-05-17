@@ -49,7 +49,9 @@
         @if (!temDatasSelecionadas) {
           <p-button size="small" icon="pi pi-clock" label="Datas" severity="secondary" [outlined]="true" type="button" (onClick)="datasPopover.toggle($event)" />
         }
-        <p-button size="small" icon="pi pi-check-square" label="Checklist" severity="secondary" [outlined]="true" type="button" />
+        @if (!temChecklist) {
+          <p-button size="small" icon="pi pi-check-square" label="Checklist" severity="secondary" [outlined]="true" type="button" (onClick)="checklistPopover.toggle($event)" />
+        }
         @if (!temMembrosSelecionados) {
           <p-button size="small" icon="pi pi-user-plus" label="Membros" severity="secondary" [outlined]="true" type="button" (onClick)="membrosPopover.toggle($event)" />
         }
@@ -230,7 +232,136 @@
         </div>
       </p-popover>
 
+      <p-popover #checklistPopover styleClass="ticket-form__checklist-popover">
+        <div class="ticket-form__checklist-popover-content">
+          <div class="ticket-form__members-popover-header">
+            <span>Adicionar Checklist</span>
+            <p-button icon="pi pi-times" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Fechar checklist" type="button" (onClick)="checklistPopover.hide()" />
+          </div>
+
+          <div class="ticket-form__field">
+            <label for="tituloChecklist">Título</label>
+            <input
+              pInputText
+              id="tituloChecklist"
+              class="ticket-form__members-search"
+              placeholder="Meu checklist"
+              [value]="tituloNovoChecklist"
+              (input)="atualizarTituloNovoChecklist($event)"
+              (keydown.enter)="$event.preventDefault(); criarChecklist(checklistPopover)"
+            />
+          </div>
+
+          <p-button
+            label="Adicionar"
+            type="button"
+            [disabled]="!podeCriarChecklist"
+            (onClick)="criarChecklist(checklistPopover)"
+          />
+        </div>
+      </p-popover>
+
       </div>
+
+      @if (checklist; as checklistAtual) {
+        <section class="ticket-form__section ticket-form__checklist-section">
+          <div class="ticket-form__checklist-header">
+            <div class="ticket-form__section-title ticket-form__checklist-title">
+              <i class="pi pi-check-square"></i>
+              <span>{{ checklistAtual.titulo }}</span>
+            </div>
+
+            <div class="ticket-form__checklist-actions">
+              @if (temItensChecklistConcluidos) {
+                <p-button
+                  [icon]="ocultarItensConcluidos ? 'pi pi-eye' : 'pi pi-eye-slash'"
+                  severity="secondary"
+                  [rounded]="true"
+                  [outlined]="true"
+                  [pTooltip]="ocultarItensConcluidos ? 'Mostrar itens marcados' : 'Ocultar itens marcados'"
+                  tooltipPosition="top"
+                  [ariaLabel]="ocultarItensConcluidos ? 'Mostrar itens marcados' : 'Ocultar itens marcados'"
+                  type="button"
+                  (onClick)="ocultarItensConcluidos = !ocultarItensConcluidos"
+                />
+              }
+              <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" severity="secondary" pTooltip="Adicionar item" tooltipPosition="top" ariaLabel="Adicionar item" type="button" (onClick)="abrirAdicaoItemChecklist()" />
+              <p-button icon="pi pi-trash" [rounded]="true" [outlined]="true" severity="secondary" pTooltip="Excluir checklist" tooltipPosition="top" ariaLabel="Excluir checklist" type="button" (onClick)="excluirChecklist()" />
+            </div>
+          </div>
+
+          <div class="card">
+            <p-progressbar [value]="percentualChecklist" />
+          </div>
+
+          @if (itensChecklistVisiveis.length) {
+            <div class="ticket-form__checklist-items">
+              @for (item of itensChecklistVisiveis; track item.id) {
+                <div class="ticket-form__checklist-item">
+                  <p-checkbox
+                    [inputId]="item.id"
+                    [binary]="true"
+                    [ngModel]="item.concluido"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="alternarItemChecklist(item, $event)"
+                  />
+                  <p-inplace
+                    styleClass="ticket-form__checklist-item-inplace"
+                    (onActivate)="iniciarEdicaoItemChecklist(item)"
+                    (onDeactivate)="itemChecklistEmEdicaoId === item.id ? cancelarEdicaoItemChecklist() : null"
+                  >
+                    <ng-template #display>
+                      <span [class.ticket-form__checklist-item-label--checked]="item.concluido">
+                        {{ item.texto }}
+                      </span>
+                    </ng-template>
+                    <ng-template #content let-closeCallback="closeCallback">
+                      <div class="ticket-form__checklist-inplace-content">
+                        <input
+                          pInputText
+                          type="text"
+                          [pAutoFocus]="itemChecklistEmEdicaoId === item.id"
+                          [value]="itemChecklistEmEdicaoId === item.id ? textoEdicaoItemChecklist : item.texto"
+                          (input)="atualizarTextoEdicaoItemChecklist($event)"
+                          (keydown.enter)="$event.preventDefault(); salvarEdicaoItemChecklist(item, $event, closeCallback)"
+                          (keydown.escape)="$event.preventDefault(); cancelarEdicaoItemChecklist($event, closeCallback)"
+                        />
+                        <p-button icon="pi pi-check" [rounded]="true" [text]="true" ariaLabel="Salvar item" type="button" [disabled]="!textoEdicaoItemChecklist.trim()" (onClick)="salvarEdicaoItemChecklist(item, $event, closeCallback)" />
+                        <p-button icon="pi pi-times" [rounded]="true" [text]="true" severity="secondary" ariaLabel="Cancelar edição" type="button" (onClick)="cancelarEdicaoItemChecklist($event, closeCallback)" />
+                      </div>
+                    </ng-template>
+                  </p-inplace>
+                </div>
+              }
+            </div>
+          }
+
+          @if (adicionandoItemChecklist) {
+            <div class="ticket-form__checklist-add">
+              <p-inplace [active]="adicionandoItemChecklist">
+                <ng-template #display>
+                  <span class="ticket-form__checklist-inplace-display">Adicionar um item</span>
+                </ng-template>
+                <ng-template #content let-closeCallback="closeCallback">
+                  <div class="ticket-form__checklist-inplace-content">
+                    <input
+                      pInputText
+                      type="text"
+                      placeholder="Adicionar um item"
+                      [pAutoFocus]="adicionandoItemChecklist"
+                      [value]="textoNovoItemChecklist"
+                      (input)="atualizarTextoNovoItemChecklist($event)"
+                      (keydown.enter)="$event.preventDefault(); adicionarItemChecklist($event, closeCallback)"
+                    />
+                    <p-button icon="pi pi-check" [rounded]="true" [text]="true" ariaLabel="Adicionar item" type="button" [disabled]="!podeAdicionarItemChecklist" (onClick)="adicionarItemChecklist($event, closeCallback)" />
+                    <p-button icon="pi pi-times" [rounded]="true" [text]="true" severity="secondary" ariaLabel="Cancelar item" type="button" (onClick)="cancelarAdicaoItemChecklist($event, closeCallback)" />
+                  </div>
+                </ng-template>
+              </p-inplace>
+            </div>
+          }
+        </section>
+      }
 
       <section class="ticket-form__section">
         <div class="ticket-form__section-header">
