@@ -303,7 +303,7 @@
 .ticket-form__checklist-items {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+
 }
 
 .ticket-form__checklist-item {
@@ -381,7 +381,7 @@
 
 .ticket-form__description-view {
   color: var(--p-text-color);
-  font-size: 1rem;
+  font-size: 1.1rem;
   line-height: 1.6;
   min-height: 6rem;
   overflow: visible;

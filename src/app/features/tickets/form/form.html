@@ -263,7 +263,40 @@
 
       </div>
 
-      @if (checklist; as checklistAtual) {
+      <section class="ticket-form__section">
+        <div class="ticket-form__section-header">
+          <div class="ticket-form__section-title">
+            <i class="pi pi-align-left"></i>
+            <span>Descrição</span>
+          </div>
+          @if (!descricaoEmEdicao) {
+            <p-button label="Editar" severity="secondary" [outlined]="true" type="button" (onClick)="editarDescricao()" />
+          }
+        </div>
+
+        @if (descricaoEmEdicao) {
+          <p-editor
+            formControlName="descricao"
+            class="ticket-form__description-editor"
+            placeholder="Adicione uma descrição"
+            [style]="{ height: '18rem' }"
+            (onTextChange)="onDescricaoTextChange($event)"
+          />
+
+          <div class="ticket-form__description-actions">
+            <div class="ticket-form__description-primary-actions">
+              <p-button label="Salvar" type="button" (onClick)="salvarDescricao()" />
+              @if (isEdicao) {
+                <p-button label="Cancelar" severity="secondary" [text]="true" type="button" (onClick)="cancelarEdicaoDescricao()" />
+              }
+            </div>
+          </div>
+        } @else {
+          <div class="ticket-form__description-view ql-editor" [innerHTML]="descricaoFormatada"></div>
+        }
+      </section>
+
+            @if (checklist; as checklistAtual) {
         <section class="ticket-form__section ticket-form__checklist-section">
           <div class="ticket-form__checklist-header">
             <div class="ticket-form__section-title ticket-form__checklist-title">
@@ -337,8 +370,9 @@
           }
 
           @if (adicionandoItemChecklist) {
-            <div class="ticket-form__checklist-add">
-              <p-inplace [active]="adicionandoItemChecklist">
+            <div class="ticket-form__checklist-add ticket-form__checklist-item">
+              <span class="ticket-form__checklist-add-spacer" aria-hidden="true"></span>
+              <p-inplace [active]="adicionandoItemChecklist" styleClass="ticket-form__checklist-item-inplace">
                 <ng-template #display>
                   <span class="ticket-form__checklist-inplace-display">Adicionar um item</span>
                 </ng-template>
@@ -362,40 +396,6 @@
           }
         </section>
       }
-
-      <section class="ticket-form__section">
-        <div class="ticket-form__section-header">
-          <div class="ticket-form__section-title">
-            <i class="pi pi-align-left"></i>
-            <span>Descrição</span>
-          </div>
-          @if (!descricaoEmEdicao) {
-            <p-button label="Editar" severity="secondary" [outlined]="true" type="button" (onClick)="editarDescricao()" />
-          }
-        </div>
-
-        @if (descricaoEmEdicao) {
-          <p-editor
-            formControlName="descricao"
-            class="ticket-form__description-editor"
-            placeholder="Adicione uma descrição"
-            [style]="{ height: '18rem' }"
-            (onTextChange)="onDescricaoTextChange($event)"
-          />
-
-          <div class="ticket-form__description-actions">
-            <div class="ticket-form__description-primary-actions">
-              <p-button label="Salvar" type="button" (onClick)="salvarDescricao()" />
-              @if (isEdicao) {
-                <p-button label="Cancelar" severity="secondary" [text]="true" type="button" (onClick)="cancelarEdicaoDescricao()" />
-              }
-            </div>
-          </div>
-        } @else {
-          <div class="ticket-form__description-view ql-editor" [innerHTML]="descricaoFormatada"></div>
-        }
-      </section>
-
 
     </div>
 
