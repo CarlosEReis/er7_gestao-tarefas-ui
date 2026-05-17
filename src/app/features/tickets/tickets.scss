@@ -9,3 +9,19 @@
 :host ::ng-deep .p-datepicker-dropdown {
   background-color: var(--p-primary-color) !important;
 }
+
+:host ::ng-deep .tickets-view-toggle .p-togglebutton {
+  min-height: 2.5rem;
+}
+
+:host ::ng-deep .tickets-view-toggle .p-togglebutton-checked {
+  background: var(--p-primary-color) !important;
+  border-color: var(--p-primary-color) !important;
+  color: var(--p-primary-950) !important;
+}
+
+:host ::ng-deep .tickets-view-toggle .p-togglebutton-checked:hover {
+  background: var(--p-primary-400) !important;
+  border-color: var(--p-primary-400) !important;
+  color: var(--p-primary-950) !important;
+}

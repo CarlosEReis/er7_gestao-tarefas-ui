@@ -2,6 +2,7 @@ import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { Button } from 'primeng/button';
 import { DatePicker } from 'primeng/datepicker';
 import { Fluid } from 'primeng/fluid';
+import { SelectButton } from 'primeng/selectbutton';
 import { FormsModule } from '@angular/forms';
 import { List } from './list/list';
 import { Ticket, TicketsService } from './tickets-service';
@@ -11,7 +12,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-tickets',
-  imports: [Button, DatePicker, Fluid, FormsModule, List, RouterOutlet, RouterLink],
+  imports: [Button, DatePicker, Fluid, FormsModule, SelectButton, List, RouterOutlet, RouterLink],
   templateUrl: './tickets.html',
   styleUrl: './tickets.scss',
 })
@@ -23,6 +24,11 @@ export class Tickets implements OnInit{
 
   dataInicial: Date | null = null;
   dataFinal: Date | null = null;
+  viewMode = 'lista';
+  viewModeOptions = [
+    { label: 'Kanban', value: 'kanban' },
+    { label: 'Lista', value: 'lista' },
+  ];
 
   tickets = signal<Ticket[]>([]);
 
