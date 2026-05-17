@@ -63,7 +63,21 @@
 
             <footer class="ticket-card__footer">
               <div class="ticket-card__stats">
-                <span pTooltip="Membros"><i class="pi pi-users" aria-hidden="true"></i>{{ membersCount(ticket) }}</span>
+                @let members = memberAvatars(ticket);
+                @if (members.length > 0) {
+                  <div class="ticket-card__members" aria-label="Membros do ticket">
+                    @for (member of members; track trackMember($index, member)) {
+                      <p-avatar
+                        [image]="member.foto"
+                        [ariaLabel]="member.nome"
+                        [pTooltip]="member.nome"
+                        shape="circle"
+                      />
+                    }
+                  </div>
+                } @else {
+                  <span pTooltip="Membros"><i class="pi pi-users" aria-hidden="true"></i>{{ membersCount(ticket) }}</span>
+                }
 
                 <!--<span pTooltip="Branch"><i class="pi pi-code-branch" aria-hidden="true"></i>{{ ticket.branch }}</span>-->
               </div>

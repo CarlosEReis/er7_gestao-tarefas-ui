@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Avatar } from 'primeng/avatar';
 import { Button } from 'primeng/button';
@@ -8,6 +8,7 @@ import { Tooltip } from 'primeng/tooltip';
 import { catchError, forkJoin, map, of } from 'rxjs';
 import { TICKET_KANBAN_COLUMNS, TicketColumnOption } from '../kanban-columns';
 import { Ticket, TicketsService } from '../tickets-service';
+import { Usuario, UsuariosService } from '../usuarios-service';
 
 type KanbanColumn = TicketColumnOption & {
   tickets: Ticket[];
@@ -24,13 +25,29 @@ type ChecklistSummary = {
   templateUrl: './kanban.html',
   styleUrl: './kanban.scss',
 })
-export class Kanban {
+export class Kanban implements OnInit {
   private readonly ticketsService = inject(TicketsService);
+  private readonly usuariosService = inject(UsuariosService);
 
   @Output() ticketsChanged = new EventEmitter<Ticket[]>();
 
   columns: KanbanColumn[] = this.createEmptyColumns();
   checklistSummaries: Record<string, ChecklistSummary> = {};
+  usuariosPorId: Record<string, Usuario> = {};
+
+  ngOnInit(): void {
+    this.usuariosService.buscarUsuarios().subscribe((usuarios) => {
+      this.usuariosPorId = usuarios.reduce<Record<string, Usuario>>((acc, usuario) => {
+        acc[String(usuario.id)] = usuario;
+
+        if (usuario.apiId) {
+          acc[usuario.apiId] = usuario;
+        }
+
+        return acc;
+      }, {});
+    });
+  }
 
   @Input() set tickets(tickets: Ticket[]) {
     this.columns = this.createColumns(tickets);
@@ -104,6 +121,16 @@ export class Kanban {
 
   membersCount(ticket: Ticket): number {
     return ticket.membros?.length ?? 0;
+  }
+
+  memberAvatars(ticket: Ticket): Usuario[] {
+    return (ticket.membros ?? [])
+      .map((memberId) => this.usuariosPorId[String(memberId)])
+      .filter((usuario): usuario is Usuario => !!usuario);
+  }
+
+  trackMember(_index: number, member: Usuario): string {
+    return String(member.apiId ?? member.id);
   }
 
   checklistSummary(ticket: Ticket): ChecklistSummary {

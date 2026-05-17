@@ -92,8 +92,9 @@
       "projeto": "Teste 01",
       "tipo": "Feature",
       "prioridade": "Medium",
-      "status": "Em Andamento",
-      "branch": "refactor/table-component"
+      "status": "Em Progresso",
+      "branch": "refactor/table-component",
+      "coluna": "em-progresso"
     },
     {
       "id": "20260511.T74",

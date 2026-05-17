@@ -4,11 +4,16 @@ import { map, Observable } from 'rxjs';
 
 export type Usuario = {
   id: number;
+  apiId?: string;
   nome: string;
   foto: string;
 };
 
-type UsuarioApi = Omit<Usuario, 'id'>;
+type UsuarioApi = {
+  id?: string;
+  nome: string;
+  foto: string;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -33,8 +38,9 @@ export class UsuariosService {
           const id = idLegado ?? proximoId++;
 
           return {
-            id,
             ...usuario,
+            id,
+            apiId: usuario.id,
           };
         });
       }),
