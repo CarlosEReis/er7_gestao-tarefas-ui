@@ -31,5 +31,9 @@
 </div>
 
 <div>
-  <app-list [tickets]="tickets()"></app-list>
+  @if (viewMode === 'kanban') {
+    <app-kanban [tickets]="tickets()" (ticketsChanged)="atualizarTicketsKanban($event)"></app-kanban>
+  } @else {
+    <app-list [tickets]="tickets()"></app-list>
+  }
 </div>

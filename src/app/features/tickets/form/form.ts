@@ -18,6 +18,7 @@ import { Select } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
 import { EditorTextChangeEvent } from 'primeng/types/editor';
 import { Etiqueta, EtiquetasService } from '../etiquetas-service';
+import { TICKET_KANBAN_COLUMNS } from '../kanban-columns';
 import { TicketsService, Ticket, TicketChecklist, TicketChecklistItem } from '../tickets-service';
 import { Usuario, UsuariosService } from '../usuarios-service';
 
@@ -83,12 +84,7 @@ export class Form implements OnInit {
   private descricaoAntesEdicao = '';
   private descricaoHtmlAtual = '';
 
-  colunas: Option[] = [
-    { label: 'Backlog', value: 'backlog' },
-    { label: 'Em Progresso', value: 'em-progresso' },
-    { label: 'Em Teste', value: 'em-teste' },
-    { label: 'Concluído', value: 'concluido' },
-  ];
+  colunas: Option[] = [...TICKET_KANBAN_COLUMNS];
   membrosDisponiveis: Member[] = [];
   etiquetasDisponiveis: Etiqueta[] = [];
   coresEtiquetas = [

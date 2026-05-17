@@ -5,6 +5,7 @@ import { Fluid } from 'primeng/fluid';
 import { SelectButton } from 'primeng/selectbutton';
 import { FormsModule } from '@angular/forms';
 import { List } from './list/list';
+import { Kanban } from './kanban/kanban';
 import { Ticket, TicketsService } from './tickets-service';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
@@ -12,7 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-tickets',
-  imports: [Button, DatePicker, Fluid, FormsModule, SelectButton, List, RouterOutlet, RouterLink],
+  imports: [Button, DatePicker, Fluid, FormsModule, SelectButton, List, Kanban, RouterOutlet, RouterLink],
   templateUrl: './tickets.html',
   styleUrl: './tickets.scss',
 })
@@ -49,5 +50,8 @@ export class Tickets implements OnInit{
     });
   }
 
+  atualizarTicketsKanban(tickets: Ticket[]): void {
+    this.tickets.set(tickets);
+  }
 
 }
