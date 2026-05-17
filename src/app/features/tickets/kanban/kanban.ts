@@ -5,11 +5,17 @@ import { Avatar } from 'primeng/avatar';
 import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { Tooltip } from 'primeng/tooltip';
+import { catchError, forkJoin, map, of } from 'rxjs';
 import { TICKET_KANBAN_COLUMNS, TicketColumnOption } from '../kanban-columns';
 import { Ticket, TicketsService } from '../tickets-service';
 
 type KanbanColumn = TicketColumnOption & {
   tickets: Ticket[];
+};
+
+type ChecklistSummary = {
+  done: number;
+  total: number;
 };
 
 @Component({
@@ -24,9 +30,11 @@ export class Kanban {
   @Output() ticketsChanged = new EventEmitter<Ticket[]>();
 
   columns: KanbanColumn[] = this.createEmptyColumns();
+  checklistSummaries: Record<string, ChecklistSummary> = {};
 
   @Input() set tickets(tickets: Ticket[]) {
     this.columns = this.createColumns(tickets);
+    this.loadChecklistSummaries(tickets);
   }
 
   drop(event: CdkDragDrop<Ticket[]>, targetColumn: KanbanColumn): void {
@@ -98,6 +106,23 @@ export class Kanban {
     return ticket.membros?.length ?? 0;
   }
 
+  checklistSummary(ticket: Ticket): ChecklistSummary {
+    return this.checklistSummaries[ticket.id] ?? { done: 0, total: 0 };
+  }
+
+  hasDescription(ticket: Ticket): boolean {
+    if (!ticket.descricao) {
+      return false;
+    }
+
+    const descriptionText = ticket.descricao
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .trim();
+
+    return descriptionText.length > 0 || /<img\b/i.test(ticket.descricao);
+  }
+
   labelColor(label: string, index: number): string {
     const colors = ['#34d399', '#facc15', '#fb923c', '#f87171', '#38bdf8', '#a78bfa'];
     const labelSeed = [...label].reduce((sum, char) => sum + char.charCodeAt(0), index);
@@ -124,6 +149,39 @@ export class Kanban {
 
   private emitTicketsChanged(): void {
     this.ticketsChanged.emit(this.columns.flatMap((column) => column.tickets));
+  }
+
+  private loadChecklistSummaries(tickets: Ticket[]): void {
+    if (!tickets.length) {
+      this.checklistSummaries = {};
+      return;
+    }
+
+    forkJoin(
+      tickets.map((ticket) =>
+        this.ticketsService.buscarChecklistPorTicketId(ticket.id).pipe(
+          map((checklist) => {
+            const itens = checklist?.itens ?? [];
+            return {
+              ticketId: ticket.id,
+              summary: {
+                done: itens.filter((item) => item.concluido).length,
+                total: itens.length,
+              },
+            };
+          }),
+          catchError(() => of({
+            ticketId: ticket.id,
+            summary: { done: 0, total: 0 },
+          })),
+        )
+      )
+    ).subscribe((summaries) => {
+      this.checklistSummaries = summaries.reduce<Record<string, ChecklistSummary>>((acc, item) => {
+        acc[item.ticketId] = item.summary;
+        return acc;
+      }, {});
+    });
   }
 
   private resolveColumnValue(ticket: Ticket): string {

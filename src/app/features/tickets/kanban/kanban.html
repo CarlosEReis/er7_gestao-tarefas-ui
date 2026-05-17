@@ -46,8 +46,14 @@
             </div>
 
             <div class="ticket-card__meta">
-              <span pTooltip="Ticket"><i class="pi pi-eye" aria-hidden="true"></i>{{ ticket.ticketId }}</span>
+              <!--<span pTooltip="Ticket"><i class="pi pi-eye" aria-hidden="true"></i>{{ ticket.ticketId }}</span>-->
               <span pTooltip="Prazo"><i class="pi pi-clock" aria-hidden="true"></i>{{ dateLabel(ticket) }}</span>
+              @if (hasDescription(ticket)) {
+                <span pTooltip="Este cartão tem uma descrição"><i class="pi pi-align-left" aria-hidden="true"></i></span>
+              }
+                @if (checklistSummary(ticket).total > 0) {
+                  <span pTooltip="Checklist"><i class="pi pi-check-square" aria-hidden="true"></i>{{ checklistSummary(ticket).done }}/{{ checklistSummary(ticket).total }}</span>
+                }
             </div>
 
             <div class="ticket-card__tags">
@@ -58,7 +64,8 @@
             <footer class="ticket-card__footer">
               <div class="ticket-card__stats">
                 <span pTooltip="Membros"><i class="pi pi-users" aria-hidden="true"></i>{{ membersCount(ticket) }}</span>
-                <span pTooltip="Branch"><i class="pi pi-code-branch" aria-hidden="true"></i>{{ ticket.branch }}</span>
+
+                <!--<span pTooltip="Branch"><i class="pi pi-code-branch" aria-hidden="true"></i>{{ ticket.branch }}</span>-->
               </div>
 
               <p-avatar

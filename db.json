@@ -108,7 +108,15 @@
       "tipo": "Feature",
       "prioridade": "Medium",
       "status": "Atualizar Homol",
-      "branch": "feature/settings-screen-dev"
+      "branch": "feature/settings-screen-dev",
+      "descricao": "",
+      "etiquetas": [],
+      "dataInicio": "2026-05-11",
+      "dataFinal": null,
+      "membros": [
+        "hpm_03V9q_0"
+      ],
+      "coluna": "atualizar-homol"
     },
     {
       "id": "20260511.T80",
@@ -235,6 +243,34 @@
         2
       ],
       "coluna": "backlog"
+    },
+    {
+      "id": "_kwt_SDbRxU",
+      "ticketId": "20260517.T150",
+      "dtAbertura": "2026-05-18",
+      "desenvolvedor": {
+        "nome": "Carlos Dias",
+        "foto": "https://avatars.githubusercontent.com/u/241844841?v=4&size=64"
+      },
+      "titulo": "teste",
+      "projeto": "Teste 01",
+      "tipo": "Feature",
+      "prioridade": "Medium",
+      "status": "Atualizar Prod",
+      "branch": "feature/teste",
+      "descricao": "<h2>What&nbsp;is&nbsp;Lorem&nbsp;Ipsum?</h2><p><strong>Lorem&nbsp;Ipsum</strong>&nbsp;is&nbsp;simply&nbsp;dummy&nbsp;text&nbsp;of&nbsp;the&nbsp;printing&nbsp;and&nbsp;typesetting&nbsp;industry.&nbsp;Lorem&nbsp;Ipsum&nbsp;has&nbsp;been&nbsp;the&nbsp;industry&#39;s&nbsp;standard&nbsp;dummy&nbsp;text&nbsp;ever&nbsp;since&nbsp;the&nbsp;1500s,&nbsp;when&nbsp;an&nbsp;unknown&nbsp;printer&nbsp;took&nbsp;a&nbsp;galley&nbsp;of&nbsp;type&nbsp;and&nbsp;scrambled&nbsp;it&nbsp;to&nbsp;make&nbsp;a&nbsp;type&nbsp;specimen&nbsp;book.&nbsp;It&nbsp;has&nbsp;survived&nbsp;not&nbsp;only&nbsp;five&nbsp;centuries,&nbsp;but&nbsp;also&nbsp;the&nbsp;leap&nbsp;into&nbsp;electronic&nbsp;typesetting,&nbsp;remaining&nbsp;essentially&nbsp;unchanged.&nbsp;It&nbsp;was&nbsp;popularised&nbsp;in&nbsp;the&nbsp;1960s&nbsp;with&nbsp;the&nbsp;release&nbsp;of&nbsp;Letraset&nbsp;sheets&nbsp;containing&nbsp;Lorem&nbsp;Ipsum&nbsp;passages,&nbsp;and&nbsp;more&nbsp;recently&nbsp;with&nbsp;desktop&nbsp;publishing&nbsp;software&nbsp;like&nbsp;Aldus&nbsp;PageMaker&nbsp;including&nbsp;versions&nbsp;of&nbsp;Lorem&nbsp;Ipsum.</p>",
+      "etiquetas": [
+        "Torre",
+        "bug"
+      ],
+      "dataInicio": "2026-05-18",
+      "dataFinal": "2026-05-22",
+      "membros": [
+        "QtMJtNckZ1o",
+        "nuAsFZ3nS90",
+        "OKERV7sJ5Ik"
+      ],
+      "coluna": "atualizar-prod"
     }
   ],
   "usuarios": [
@@ -325,7 +361,7 @@
         {
           "id": "item-1778978134077-r24s6qc",
           "texto": "teste",
-          "concluido": true
+          "concluido": false
         },
         {
           "id": "item-1778978234669-0g32tol",
@@ -347,6 +383,55 @@
         {
           "id": "item-1778979679852-d7lfo3n",
           "texto": "teste 02",
+          "concluido": false
+        }
+      ]
+    },
+    {
+      "id": "tnQQ9hfT7ps",
+      "ticketId": "20260511.T74",
+      "titulo": "teste",
+      "itens": [
+        {
+          "id": "item-1779029859689-98etozh",
+          "texto": "fazer 01",
+          "concluido": false
+        },
+        {
+          "id": "item-1779029865667-puqy2xw",
+          "texto": "fazer 02",
+          "concluido": false
+        },
+        {
+          "id": "item-1779029871804-h1fta77",
+          "texto": "fazer 03",
+          "concluido": false
+        },
+        {
+          "id": "item-1779029876705-seuf5mv",
+          "texto": "fazer 04",
+          "concluido": false
+        }
+      ]
+    },
+    {
+      "id": "P0NtWg2ipFY",
+      "ticketId": "_kwt_SDbRxU",
+      "titulo": "teste",
+      "itens": [
+        {
+          "id": "item-1779041061003-49rexaq",
+          "texto": "teste 01",
+          "concluido": false
+        },
+        {
+          "id": "item-1779041067619-m022h7i",
+          "texto": "teste 02",
+          "concluido": false
+        },
+        {
+          "id": "item-1779041071834-6rh8jdf",
+          "texto": "teste 03",
           "concluido": false
         }
       ]
