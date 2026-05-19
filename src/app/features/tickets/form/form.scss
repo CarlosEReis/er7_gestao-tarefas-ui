@@ -8,6 +8,10 @@
   max-height: 90vh;
 }
 
+.ticket-form__file-input {
+  display: none;
+}
+
 .ticket-form__topbar {
   display: grid;
   grid-template-columns: minmax(9rem, 1fr) auto minmax(9rem, 1fr);
@@ -488,4 +492,5 @@
   .ticket-form__description-primary-actions {
     flex-wrap: wrap;
   }
+
 }

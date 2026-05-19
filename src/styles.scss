@@ -13,3 +13,94 @@ html {
 .p-overlay-mask{
   backdrop-filter: blur(2px) !important;
 }
+
+.ticket-form__attachments,
+.ticket-form__attachments-list,
+.ticket-form__attachment-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ticket-form__attachment-info {
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.ticket-form__attachment {
+  align-items: center;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 4rem minmax(0, 1fr) auto;
+}
+
+.ticket-form__attachment-preview {
+  align-items: center;
+  background: var(--p-content-hover-background);
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 0.375rem;
+  color: var(--p-text-color);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-weight: 700;
+  height: 4rem;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0;
+  width: 4rem;
+}
+
+.ticket-form__attachment-preview img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.ticket-form__attachment-name {
+  background: transparent;
+  border: none;
+  color: var(--p-text-color);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  overflow: hidden;
+  padding: 0;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ticket-form__attachment-name:hover {
+  text-decoration: underline;
+}
+
+.ticket-form__attachment-meta,
+.ticket-form__attachment-preview span {
+  color: var(--p-text-muted-color);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.ticket-form__attachment-actions {
+  align-items: center;
+  display: flex;
+  gap: 0.35rem;
+}
+
+@media (max-width: 768px) {
+  .ticket-form__attachment {
+    align-items: start;
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+  }
+
+  .ticket-form__attachment-preview {
+    height: 3.5rem;
+    width: 3.5rem;
+  }
+
+  .ticket-form__attachment-actions {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+}

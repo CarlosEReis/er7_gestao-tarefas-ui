@@ -12,6 +12,14 @@
   (onHide)="onDialogHide()"
 >
   <form class="ticket-form" [formGroup]="ticketForm" (ngSubmit)="salvar()">
+    <input
+      #arquivoInput
+      class="ticket-form__file-input"
+      type="file"
+      multiple
+      (change)="selecionarArquivos($event)"
+    />
+
     <div class="ticket-form__topbar">
       <p-select
         [options]="colunas"
@@ -24,7 +32,7 @@
       <span class="ticket-form__ticket-id">{{ ticketIdCabecalho }}</span>
 
       <div class="ticket-form__header-actions">
-        <p-button icon="pi pi-image" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Anexar imagem" type="button" />
+        <p-button icon="pi pi-paperclip" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Anexar arquivo" type="button" [loading]="anexandoArquivos" [disabled]="anexandoArquivos" (onClick)="arquivoInput.click()" />
         <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Mais opções" type="button" />
         <p-button icon="pi pi-times" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Fechar" type="button" (onClick)="fechar()" />
       </div>
@@ -55,7 +63,9 @@
         @if (!temMembrosSelecionados) {
           <p-button size="small" icon="pi pi-user-plus" label="Membros" severity="secondary" [outlined]="true" type="button" (onClick)="membrosPopover.toggle($event)" />
         }
-        <p-button size="small" icon="pi pi-paperclip" label="Anexo" severity="secondary" [outlined]="true" type="button" />
+        @if (!temArquivos) {
+          <p-button size="small" icon="pi pi-paperclip" label="Anexo" severity="secondary" [outlined]="true" type="button" [loading]="anexandoArquivos" [disabled]="anexandoArquivos" (onClick)="arquivoInput.click()" />
+        }
       </div>
 
       @if (temMembrosSelecionados || temEtiquetasSelecionadas || temDatasSelecionadas) {
@@ -333,7 +343,69 @@
         }
       </section>
 
-            @if (checklist; as checklistAtual) {
+      <section class="ticket-form__section ticket-form__attachments-section">
+        <div class="ticket-form__section-header">
+          <div class="ticket-form__section-title">
+            <i class="pi pi-paperclip"></i>
+            <span>Anexos</span>
+          </div>
+          <p-button label="Adicionar" severity="secondary" [outlined]="true" type="button" [loading]="anexandoArquivos" [disabled]="anexandoArquivos" (onClick)="arquivoInput.click()" />
+        </div>
+
+        <div class="ticket-form__attachments">
+          <span class="ticket-form__members-popover-label">Arquivos</span>
+
+          @if (temArquivos) {
+            <div class="ticket-form__attachments-list">
+              @for (arquivo of arquivos; track arquivo.id) {
+                <div class="ticket-form__attachment">
+                  <button class="ticket-form__attachment-preview" type="button" (click)="abrirArquivo(arquivo)" [attr.aria-label]="'Abrir ' + arquivo.nome">
+                    @if (ehImagem(arquivo)) {
+                      <img [src]="arquivo.conteudo" [alt]="arquivo.nome" />
+                    } @else {
+                      <span>{{ extensaoArquivo(arquivo.nome) }}</span>
+                    }
+                  </button>
+
+                  <div class="ticket-form__attachment-info">
+                    <button class="ticket-form__attachment-name" type="button" (click)="abrirArquivo(arquivo)">
+                      {{ arquivo.nome }}
+                    </button>
+                    <span class="ticket-form__attachment-meta">
+                      Adicionado em {{ formatarDataArquivo(arquivo.criadoEm) }}
+                      @if (arquivo.pendente) {
+                        <span> · pendente</span>
+                      }
+                    </span>
+                  </div>
+
+                  <div class="ticket-form__attachment-actions">
+                    <p-button icon="pi pi-external-link" [text]="true" [rounded]="true" severity="secondary" pTooltip="Abrir arquivo" tooltipPosition="top" ariaLabel="Abrir arquivo" type="button" (onClick)="abrirArquivo(arquivo)" />
+                    <p-button icon="pi pi-ellipsis-h" [outlined]="true" [rounded]="true" severity="secondary" ariaLabel="Mais opções do arquivo" type="button" (onClick)="arquivoAcoesPopover.toggle($event)" />
+                  </div>
+
+                  <p-popover #arquivoAcoesPopover styleClass="ticket-form__attachment-actions-popover">
+                    <div class="ticket-form__members-options">
+                      <button class="ticket-form__member-option" type="button" (click)="abrirArquivo(arquivo); arquivoAcoesPopover.hide()">
+                        <i class="pi pi-external-link"></i>
+                        <span>Abrir</span>
+                      </button>
+                      <button class="ticket-form__member-option" type="button" (click)="removerArquivo(arquivo); arquivoAcoesPopover.hide()">
+                        <i class="pi pi-trash"></i>
+                        <span>Remover</span>
+                      </button>
+                    </div>
+                  </p-popover>
+                </div>
+              }
+            </div>
+          } @else {
+            <span class="ticket-form__members-empty">Nenhum arquivo anexado</span>
+          }
+        </div>
+      </section>
+
+      @if (checklist; as checklistAtual) {
         <section class="ticket-form__section ticket-form__checklist-section">
           <div class="ticket-form__checklist-header">
             <div class="ticket-form__section-title ticket-form__checklist-title">

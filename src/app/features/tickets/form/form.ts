@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormsModule, ReactiveFormsModule, ValidationErrors, Validators, NonNullableFormBuilder } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,9 +17,10 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { Select } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
 import { EditorTextChangeEvent } from 'primeng/types/editor';
+import { forkJoin } from 'rxjs';
 import { Etiqueta, EtiquetasService } from '../etiquetas-service';
 import { TICKET_KANBAN_COLUMNS } from '../kanban-columns';
-import { TicketsService, Ticket, TicketChecklist, TicketChecklistItem } from '../tickets-service';
+import { TicketsService, Ticket, TicketArquivo, TicketChecklist, TicketChecklistItem, NovoTicketArquivo } from '../tickets-service';
 import { Usuario, UsuariosService } from '../usuarios-service';
 
 type Option = {
@@ -31,6 +32,10 @@ type Member = {
   id: number;
   nome: string;
   foto: string;
+};
+
+type TicketArquivoVisual = TicketArquivo & {
+  pendente?: boolean;
 };
 
 @Component({
@@ -65,6 +70,7 @@ export class Form implements OnInit {
   private readonly usuariosService = inject(UsuariosService);
   private readonly etiquetasService = inject(EtiquetasService);
   private readonly formBuilder = inject(NonNullableFormBuilder);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
   visible = true;
   salvando = false;
@@ -73,13 +79,16 @@ export class Form implements OnInit {
   termoBuscaMembros = '';
   termoBuscaEtiquetas = '';
   checklist: TicketChecklist | null = null;
+  arquivos: TicketArquivoVisual[] = [];
   tituloNovoChecklist = '';
   textoNovoItemChecklist = '';
   itemChecklistEmEdicaoId: string | null = null;
   textoEdicaoItemChecklist = '';
   adicionandoItemChecklist = false;
   ocultarItensConcluidos = false;
+  anexandoArquivos = false;
   private checklistPersistido = false;
+  private arquivosPendentes: TicketArquivoVisual[] = [];
   criandoEtiqueta = false;
   private descricaoAntesEdicao = '';
   private descricaoHtmlAtual = '';
@@ -303,6 +312,71 @@ export class Form implements OnInit {
     this.ticketForm.controls.dataRange.setValue(null);
   }
 
+  selecionarArquivos(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const arquivosSelecionados = Array.from(input.files ?? []);
+    input.value = '';
+
+    if (!arquivosSelecionados.length || this.anexandoArquivos) {
+      return;
+    }
+
+    this.anexandoArquivos = true;
+    void Promise.all(arquivosSelecionados.map((arquivo) => this.montarArquivoVisual(arquivo)))
+      .then((arquivos) => this.adicionarArquivos(arquivos))
+      .catch(() => {
+        this.anexandoArquivos = false;
+        this.atualizarTela();
+      });
+  }
+
+  abrirArquivo(arquivo: TicketArquivoVisual): void {
+    if (!arquivo.conteudo) {
+      return;
+    }
+
+    window.open(arquivo.conteudo, '_blank', 'noopener');
+  }
+
+  removerArquivo(arquivo: TicketArquivoVisual): void {
+    if (arquivo.pendente) {
+      this.arquivos = this.arquivos.filter((item) => item.id !== arquivo.id);
+      this.arquivosPendentes = this.arquivosPendentes.filter((item) => item.id !== arquivo.id);
+      return;
+    }
+
+    this.ticketsService.excluirArquivo(arquivo.id).subscribe({
+      next: () => {
+        this.arquivos = this.arquivos.filter((item) => item.id !== arquivo.id);
+      },
+    });
+  }
+
+  ehImagem(arquivo: TicketArquivoVisual): boolean {
+    return arquivo.tipo.startsWith('image/');
+  }
+
+  extensaoArquivo(nome: string): string {
+    const partes = nome.split('.');
+    const extensao = partes.length > 1 ? partes.at(-1)?.trim().toUpperCase() : '';
+    return extensao ? extensao.slice(0, 4) : 'ARQ';
+  }
+
+  formatarDataArquivo(criadoEm: string): string {
+    const data = new Date(criadoEm);
+    if (Number.isNaN(data.getTime())) {
+      return '';
+    }
+
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(data);
+  }
+
   atualizarBuscaMembros(event: Event): void {
     this.termoBuscaMembros = (event.target as HTMLInputElement).value;
   }
@@ -433,6 +507,10 @@ export class Form implements OnInit {
     return (this.checklist?.itens ?? []).some((item) => item.concluido);
   }
 
+  get temArquivos(): boolean {
+    return this.arquivos.length > 0;
+  }
+
   get temDatasSelecionadas(): boolean {
     return this.datasSelecionadas.length > 0;
   }
@@ -480,7 +558,9 @@ export class Form implements OnInit {
     requisicao$.subscribe({
       next: (ticketSalvo) => {
         this.ticketOriginal = ticketSalvo;
-        this.persistirChecklistAposSalvar(ticketSalvo, () => this.fechar());
+        this.persistirChecklistAposSalvar(ticketSalvo, () => {
+          this.finalizarSalvamento(ticketSalvo);
+        });
       },
       error: () => {
         this.salvando = false;
@@ -502,6 +582,7 @@ export class Form implements OnInit {
         });
         this.descricaoHtmlAtual = ticket.descricao ?? '';
         this.carregarChecklist(ticket.id);
+        this.carregarArquivos(ticket.id);
       },
       error: () => {
         void this.router.navigate(['/tickets']);
@@ -587,6 +668,33 @@ export class Form implements OnInit {
     });
   }
 
+  private carregarArquivos(ticketId: string): void {
+    this.ticketsService.buscarArquivosPorTicketId(ticketId).subscribe({
+      next: (arquivos) => {
+        this.arquivos = this.ordenarArquivos(arquivos);
+      },
+    });
+  }
+
+  private adicionarArquivos(arquivos: TicketArquivoVisual[]): void {
+    if (!arquivos.length) {
+      this.anexandoArquivos = false;
+      this.atualizarTela();
+      return;
+    }
+
+    const ticketId = this.ticketOriginal?.id ?? '';
+    const arquivosPendentes = arquivos.map((arquivo) => ({ ...arquivo, ticketId, pendente: true }));
+    this.arquivos = this.ordenarArquivos([...this.arquivos, ...arquivosPendentes]);
+    this.arquivosPendentes = [...this.arquivosPendentes, ...arquivosPendentes];
+    this.anexandoArquivos = false;
+    this.atualizarTela();
+
+    if (this.isEdicao && this.ticketOriginal) {
+      this.persistirArquivosPendentes(arquivosPendentes, this.ticketOriginal.id);
+    }
+  }
+
   private persistirChecklistAtual(): void {
     if (!this.isEdicao || !this.ticketOriginal || !this.checklist) {
       return;
@@ -634,6 +742,136 @@ export class Form implements OnInit {
         this.salvando = false;
       },
     });
+  }
+
+  private finalizarSalvamento(ticket: Ticket): void {
+    if (!this.isEdicao && this.arquivosPendentes.length) {
+      this.persistirArquivosPendentesAposSalvar(ticket, () => this.concluirSalvamento());
+      return;
+    }
+
+    this.concluirSalvamento();
+  }
+
+  private concluirSalvamento(): void {
+    this.salvando = false;
+    this.fechar();
+    this.atualizarTela();
+  }
+
+  private persistirArquivosPendentesAposSalvar(ticket: Ticket, onComplete: () => void): void {
+    if (!this.arquivosPendentes.length) {
+      onComplete();
+      return;
+    }
+
+    this.persistirArquivosPendentes([...this.arquivosPendentes], ticket.id, onComplete, () => {
+      this.salvando = false;
+    });
+  }
+
+  private persistirArquivosPendentes(
+    arquivosPendentes: TicketArquivoVisual[],
+    ticketId: string,
+    onComplete?: () => void,
+    onError?: () => void,
+  ): void {
+    if (!arquivosPendentes.length) {
+      onComplete?.();
+      return;
+    }
+
+    const idsPendentes = new Set(arquivosPendentes.map((arquivo) => arquivo.id));
+    const payloads = arquivosPendentes.map((arquivo) => this.montarPayloadArquivo(arquivo, ticketId));
+
+    this.persistirArquivos(payloads, (arquivosSalvos) => {
+      this.arquivos = this.ordenarArquivos([
+        ...this.arquivos.filter((arquivo) => !idsPendentes.has(arquivo.id)),
+        ...arquivosSalvos,
+      ]);
+      this.arquivosPendentes = this.arquivosPendentes.filter((arquivo) => !idsPendentes.has(arquivo.id));
+      onComplete?.();
+      this.atualizarTela();
+    }, () => {
+      onError?.();
+      this.atualizarTela();
+    });
+  }
+
+  private persistirArquivos(
+    arquivos: NovoTicketArquivo[],
+    onComplete: (arquivosSalvos: TicketArquivo[]) => void,
+    onError: () => void,
+  ): void {
+    if (!arquivos.length) {
+      onComplete([]);
+      return;
+    }
+
+    forkJoin(arquivos.map((arquivo) => this.ticketsService.criarArquivo(arquivo))).subscribe({
+      next: onComplete,
+      error: onError,
+    });
+  }
+
+  private async montarArquivoVisual(arquivo: File): Promise<TicketArquivoVisual> {
+    const conteudo = await this.lerArquivoComoDataUrl(arquivo);
+
+    return {
+      id: this.gerarIdLocal('arquivo'),
+      ticketId: this.ticketOriginal?.id ?? '',
+      nome: arquivo.name,
+      tipo: arquivo.type || this.inferirTipoArquivo(arquivo.name),
+      tamanho: arquivo.size,
+      conteudo,
+      criadoEm: new Date().toISOString(),
+    };
+  }
+
+  private montarPayloadArquivo(arquivo: TicketArquivoVisual, ticketId: string): NovoTicketArquivo {
+    return {
+      ticketId,
+      nome: arquivo.nome,
+      tipo: arquivo.tipo,
+      tamanho: arquivo.tamanho,
+      conteudo: arquivo.conteudo,
+      criadoEm: arquivo.criadoEm,
+    };
+  }
+
+  private lerArquivoComoDataUrl(arquivo: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result ?? ''));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(arquivo);
+    });
+  }
+
+  private inferirTipoArquivo(nome: string): string {
+    const extensao = this.extensaoArquivo(nome).toLowerCase();
+    const tipos: Record<string, string> = {
+      pdf: 'application/pdf',
+      jpg: 'image/jpeg',
+      jpeg: 'image/jpeg',
+      png: 'image/png',
+      gif: 'image/gif',
+      webp: 'image/webp',
+      txt: 'text/plain',
+      csv: 'text/csv',
+    };
+
+    return tipos[extensao] ?? 'application/octet-stream';
+  }
+
+  private ordenarArquivos<T extends TicketArquivoVisual>(arquivos: T[]): T[] {
+    return [...arquivos].sort((primeiro, segundo) => (
+      new Date(segundo.criadoEm).getTime() - new Date(primeiro.criadoEm).getTime()
+    ));
+  }
+
+  private atualizarTela(): void {
+    this.changeDetectorRef.detectChanges();
   }
 
   private aplicarDescricaoEditada(): void {
