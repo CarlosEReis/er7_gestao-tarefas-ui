@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 
 interface MenuSection {
@@ -9,7 +10,7 @@ interface MenuSection {
 
 @Component({
   selector: 'app-sidebar',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
@@ -20,22 +21,24 @@ export class Sidebar {
     {
       title: 'DASHBOARDS',
       items: [
-        { label: 'E-Commerce', icon: 'pi pi-home' },
-        { label: 'Banking', icon: 'pi pi-image' },
+        { label: 'Projetos', icon: 'pi pi-home' },
+        { label: 'Tickets', icon: 'pi pi-image' },
       ],
     },
     {
-      title: 'APPS',
+      title: 'Aplicação',
       items: [
-        { label: 'Blog', icon: 'pi pi-comment', badge: 'v' },
-        { label: 'Chat', icon: 'pi pi-comments' },
-        { label: 'Files', icon: 'pi pi-folder' },
-        { label: 'Kanban', icon: 'pi pi-bars' },
+        { label: 'Projetos', icon: 'pi pi-address-book', badge: 'v' },
+        { label: 'Tickets', icon: 'pi pi-list-check', routerLink: ['/tickets'] },
+        { label: 'Releases', icon: 'pi pi-box' },
+        { label: 'Agenda', icon: 'pi pi-calendar' },
+        { label: 'Usuários', icon: 'pi pi-users' },
+        /*{ label: 'Kanban', icon: 'pi pi-bars' },
         { label: 'Mail', icon: 'pi pi-envelope', badge: 'v' },
-        { label: 'Task List', icon: 'pi pi-check-square' },
+        { label: 'Task List', icon: 'pi pi-check-square' },*/
       ],
     },
-    {
+    /*{
       title: 'UI KIT',
       items: [
         { label: 'Form Layout', icon: 'pi pi-image' },
@@ -49,7 +52,7 @@ export class Sidebar {
         { label: 'Media', icon: 'pi pi-image' },
         { label: 'Menu', icon: 'pi pi-bars' },
       ],
-    },
+    },*/
   ];
 
   onMouseEnter(): void {
