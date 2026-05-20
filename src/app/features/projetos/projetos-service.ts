@@ -30,7 +30,15 @@ export class ProjetosService {
     return this.http.get<Projeto[]>(this.apiUrl);
   }
 
+  buscarProjetoPorId(id: string): Observable<Projeto> {
+    return this.http.get<Projeto>(`${this.apiUrl}/${id}`);
+  }
+
   criarProjeto(projeto: NovoProjeto): Observable<Projeto> {
     return this.http.post<Projeto>(this.apiUrl, projeto);
+  }
+
+  atualizarProjeto(projeto: Projeto): Observable<Projeto> {
+    return this.http.put<Projeto>(`${this.apiUrl}/${projeto.id}`, projeto);
   }
 }

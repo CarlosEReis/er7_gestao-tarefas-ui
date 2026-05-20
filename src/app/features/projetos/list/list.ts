@@ -1,11 +1,13 @@
 import { Component, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { Button } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { Tag } from 'primeng/tag';
 import { Projeto, ProjetoStatus } from '../projetos-service';
 
 @Component({
   selector: 'app-projetos-list',
-  imports: [TableModule, Tag],
+  imports: [Button, RouterLink, TableModule, Tag],
   templateUrl: './list.html',
   styleUrl: './list.scss',
 })

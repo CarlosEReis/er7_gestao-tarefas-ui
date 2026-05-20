@@ -284,15 +284,15 @@
   ],
   "projetos": [
     {
-      "id": "PRJ-001",
-      "nome": "Teste 01",
+      "nome": "Teste 0002",
       "chave": "TST01",
       "cliente": "ER7",
       "responsavel": "Carlos Dias",
-      "status": "Ativo",
+      "status": "Concluído",
       "dataInicio": "2026-04-01",
       "dataFinal": null,
-      "descricao": "Projeto base utilizado pelos chamados existentes."
+      "descricao": "Projeto base utilizado pelos chamados existentes.",
+      "id": "PRJ-001"
     },
     {
       "nome": "te",

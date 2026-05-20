@@ -8,6 +8,7 @@
       <th>Início</th>
       <th>Final</th>
       <th>Status</th>
+      <th>Ações</th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-projeto>
@@ -21,11 +22,14 @@
       <td>
         <p-tag [value]="projeto.status" [severity]="getSeverity(projeto.status)" />
       </td>
+      <td>
+        <p-button icon="pi pi-pencil" severity="secondary" rounded [routerLink]="[projeto.id, 'detalhe']" />
+      </td>
     </tr>
   </ng-template>
   <ng-template #emptymessage>
     <tr>
-      <td colspan="7" class="projetos-list__empty">Nenhum projeto cadastrado</td>
+      <td colspan="8" class="projetos-list__empty">Nenhum projeto cadastrado</td>
     </tr>
   </ng-template>
 </p-table>

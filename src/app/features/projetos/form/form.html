@@ -12,7 +12,7 @@
 >
   <form class="projeto-form" [formGroup]="projetoForm" (ngSubmit)="salvar()">
     <div class="projeto-form__topbar">
-      <span>Novo projeto</span>
+      <span>{{ isEdicao ? 'Editar projeto' : 'Novo projeto' }}</span>
       <p-button icon="pi pi-times" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Fechar" type="button" (onClick)="fechar()" />
     </div>
 
