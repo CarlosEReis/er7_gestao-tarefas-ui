@@ -282,6 +282,30 @@
       "coluna": "atualizar-prod"
     }
   ],
+  "projetos": [
+    {
+      "id": "PRJ-001",
+      "nome": "Teste 01",
+      "chave": "TST01",
+      "cliente": "ER7",
+      "responsavel": "Carlos Dias",
+      "status": "Ativo",
+      "dataInicio": "2026-04-01",
+      "dataFinal": null,
+      "descricao": "Projeto base utilizado pelos chamados existentes."
+    },
+    {
+      "nome": "te",
+      "chave": "TE",
+      "cliente": "tertertrtre",
+      "responsavel": "treterte",
+      "status": "Ativo",
+      "dataInicio": "2026-05-19",
+      "dataFinal": "2026-08-08",
+      "descricao": "tretertere",
+      "id": "2MuWDmlkoRI"
+    }
+  ],
   "usuarios": [
     {
       "nome": "Jéssica Braga",

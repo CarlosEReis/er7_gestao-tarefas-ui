@@ -28,7 +28,7 @@ export class Sidebar {
     {
       title: 'Aplicação',
       items: [
-        { label: 'Projetos', icon: 'pi pi-address-book', badge: 'v' },
+        { label: 'Projetos', icon: 'pi pi-address-book', routerLink: ['/projetos'] },
         { label: 'Tickets', icon: 'pi pi-list-check', routerLink: ['/tickets'] },
         { label: 'Releases', icon: 'pi pi-box' },
         { label: 'Agenda', icon: 'pi pi-calendar' },

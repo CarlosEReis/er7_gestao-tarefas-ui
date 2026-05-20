@@ -1,0 +1,75 @@
+<p-dialog
+  [modal]="true"
+  [visible]="visible"
+  [showHeader]="false"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '42rem' }"
+  [breakpoints]="{ '1199px': '84vw', '767px': '96vw' }"
+  [contentStyle]="{ padding: '0' }"
+  (onHide)="onDialogHide()"
+>
+  <form class="projeto-form" [formGroup]="projetoForm" (ngSubmit)="salvar()">
+    <div class="projeto-form__topbar">
+      <span>Novo projeto</span>
+      <p-button icon="pi pi-times" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Fechar" type="button" (onClick)="fechar()" />
+    </div>
+
+    <div class="projeto-form__content">
+      <div class="projeto-form__grid">
+        <div class="projeto-form__field projeto-form__field--wide">
+          <label for="nome">Nome</label>
+          <input pInputText id="nome" formControlName="nome" placeholder="Nome do projeto" />
+        </div>
+
+        <div class="projeto-form__field">
+          <label for="chave">Chave</label>
+          <input pInputText id="chave" formControlName="chave" placeholder="PRJ" maxlength="12" />
+        </div>
+
+        <div class="projeto-form__field">
+          <label for="status">Status</label>
+          <p-select
+            inputId="status"
+            [options]="statusOptions"
+            optionLabel="label"
+            optionValue="value"
+            formControlName="status"
+            class="w-full"
+          />
+        </div>
+
+        <div class="projeto-form__field">
+          <label for="cliente">Cliente</label>
+          <input pInputText id="cliente" formControlName="cliente" placeholder="Cliente" />
+        </div>
+
+        <div class="projeto-form__field">
+          <label for="responsavel">Responsável</label>
+          <input pInputText id="responsavel" formControlName="responsavel" placeholder="Responsável" />
+        </div>
+
+        <div class="projeto-form__field">
+          <label for="dataInicio">Início</label>
+          <p-datepicker inputId="dataInicio" formControlName="dataInicio" [showIcon]="true" [showOnFocus]="false" dateFormat="dd/mm/yy" class="w-full" />
+        </div>
+
+        <div class="projeto-form__field">
+          <label for="dataFinal">Final</label>
+          <p-datepicker inputId="dataFinal" formControlName="dataFinal" [showIcon]="true" [showOnFocus]="false" [showClear]="true" dateFormat="dd/mm/yy" class="w-full" />
+        </div>
+
+        <div class="projeto-form__field projeto-form__field--wide">
+          <label for="descricao">Descrição</label>
+          <textarea pTextarea id="descricao" formControlName="descricao" rows="5" placeholder="Resumo do projeto"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <footer class="projeto-form__footer">
+      <p-button label="Cancelar" severity="secondary" [text]="true" type="button" (onClick)="fechar()" />
+      <p-button label="Salvar" icon="pi pi-check" type="submit" [loading]="salvando" />
+    </footer>
+  </form>
+</p-dialog>

@@ -1,0 +1,22 @@
+<router-outlet></router-outlet>
+
+<div class="flex items-start">
+  <div class="grow">
+    <h1 class="text-4xl text-primary-900 font-medium mb-8">Listagem de Projetos</h1>
+  </div>
+
+  <div class="flex items-center gap-4">
+    <p-button icon="pi pi-plus" [rounded]="true" routerLink="novo" />
+
+    <div class="flex-row-reverse">
+      <p-fluid>
+        <div class="grid grid-cols-2 gap-4">
+          <p-datepicker class="w-40" [(ngModel)]="dataInicial" [showIcon]="true" inputId="dataInicialProjeto" [showOnFocus]="false" placeholder="Data Inicial" />
+          <p-datepicker class="w-40" [(ngModel)]="dataFinal" [showIcon]="true" inputId="dataFinalProjeto" [showOnFocus]="false" placeholder="Data Final" />
+        </div>
+      </p-fluid>
+    </div>
+  </div>
+</div>
+
+<app-projetos-list [projetos]="projetos()"></app-projetos-list>
