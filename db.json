@@ -9,7 +9,7 @@
         "foto": "https://ui-avatars.com/api/?name=J%C3%A9ssica%20Braga&background=f3f4f6&color=374151"
       },
       "titulo": "Corrigir login com Google",
-      "projeto": "Teste 01",
+      "projeto": "Portal",
       "tipo": "Bug",
       "prioridade": "Medium",
       "status": "Validar Homl",
@@ -38,7 +38,7 @@
         "foto": "https://avatars.githubusercontent.com/u/202285961?s=64&v=4"
       },
       "titulo": "Adicionar exportação CSV no relatório",
-      "projeto": "Teste 01",
+      "projeto": "Portal",
       "tipo": "Feature",
       "prioridade": "Medium",
       "status": "Backlog",
@@ -59,7 +59,7 @@
         "foto": "https://avatars.githubusercontent.com/u/237274457?s=64&v=4"
       },
       "titulo": "Otimizar query do dashboard",
-      "projeto": "Teste 01",
+      "projeto": "Portal",
       "tipo": "Feature",
       "prioridade": "Low",
       "status": "Atualizar Homol",
@@ -82,11 +82,12 @@
         "foto": "https://avatars.githubusercontent.com/u/241844841?v=4&size=64"
       },
       "titulo": "Erro ao salvar perfil do usuário",
-      "projeto": "Teste 01",
+      "projeto": "Portal",
       "tipo": "Bug",
       "prioridade": "High",
       "status": "Finalizado",
-      "branch": "bugfix/user-profile-save-error"
+      "branch": "bugfix/user-profile-save-error",
+      "coluna": "finalizado"
     },
     {
       "id": "20260401.T05",
@@ -97,7 +98,7 @@
         "foto": "https://avatars.githubusercontent.com/u/265536176?s=64&v=4"
       },
       "titulo": "Refatorar componente de tabela",
-      "projeto": "Teste 01",
+      "projeto": "Portal",
       "tipo": "Feature",
       "prioridade": "Medium",
       "status": "Em Progresso",
@@ -113,7 +114,7 @@
         "foto": "https://randomuser.me/api/portraits/women/13.jpg"
       },
       "titulo": "Desenvolver tela de configurações",
-      "projeto": "Teste 01",
+      "projeto": "Portal",
       "tipo": "Feature",
       "prioridade": "Medium",
       "status": "Atualizar Homol",
@@ -136,11 +137,12 @@
         "foto": "https://avatars.githubusercontent.com/u/265536176?s=64&v=4"
       },
       "titulo": "Implementar cache de dados",
-      "projeto": "Teste 01",
+      "projeto": "Portal",
       "tipo": "Feature",
       "prioridade": "Medium",
       "status": "Backlog",
-      "branch": "feature/implement-data-cache"
+      "branch": "feature/implement-data-cache",
+      "coluna": "backlog"
     },
     {
       "id": "20260511.T56",
@@ -151,11 +153,12 @@
         "foto": "https://randomuser.me/api/portraits/women/3.jpg"
       },
       "titulo": "Atualizar documentação técnica",
-      "projeto": "Teste 01",
+      "projeto": "Portal",
       "tipo": "Feature",
       "prioridade": "Medium",
       "status": "Backlog",
-      "branch": "documentation/update-tech-docs"
+      "branch": "documentation/update-tech-docs",
+      "coluna": "backlog"
     },
     {
       "id": "20260511.T45",
@@ -166,11 +169,12 @@
         "foto": "https://avatars.githubusercontent.com/u/202285961?s=64&v=4"
       },
       "titulo": "Criar testes automatizados E2E",
-      "projeto": "Teste 01",
+      "projeto": "Portal",
       "tipo": "Feature",
       "prioridade": "Medium",
       "status": "Backlog",
-      "branch": "test/create-e2e-tests"
+      "branch": "test/create-e2e-tests",
+      "coluna": "backlog"
     },
     {
       "id": "20260511.T97",
@@ -181,11 +185,12 @@
         "foto": "https://avatars.githubusercontent.com/u/241844841?v=4&size=64"
       },
       "titulo": "Refatorar módulo de usuários",
-      "projeto": "Teste 01",
+      "projeto": "Portal",
       "tipo": "Feature",
       "prioridade": "Medium",
       "status": "Backlog",
-      "branch": "refactor/user-module"
+      "branch": "refactor/user-module",
+      "coluna": "backlog"
     },
     {
       "id": "20260511.T08",
@@ -196,11 +201,12 @@
         "foto": "https://randomuser.me/api/portraits/women/13.jpg"
       },
       "titulo": "Configurar pipeline CI/CD",
-      "projeto": "Teste 01",
+      "projeto": "Portal",
       "tipo": "Feature",
       "prioridade": "Medium",
       "status": "Backlog",
-      "branch": "devops/configure-ci-cd"
+      "branch": "devops/configure-ci-cd",
+      "coluna": "backlog"
     },
     {
       "id": "QYGUlsvx-Qk",
@@ -211,7 +217,7 @@
         "foto": "https://ui-avatars.com/api/?name=Lucas%20Rocha&background=f3f4f6&color=374151"
       },
       "titulo": "Teste inicial",
-      "projeto": "Teste 01",
+      "projeto": "Portal",
       "tipo": "Feature",
       "prioridade": "Medium",
       "status": "Backlog",
@@ -237,7 +243,7 @@
         "foto": "https://ui-avatars.com/api/?name=J%C3%A9ssica%20Braga&background=f3f4f6&color=374151"
       },
       "titulo": "Teste de título",
-      "projeto": "Teste 01",
+      "projeto": "Portal",
       "tipo": "Feature",
       "prioridade": "Medium",
       "status": "Backlog",
@@ -262,7 +268,7 @@
         "foto": "https://avatars.githubusercontent.com/u/241844841?v=4&size=64"
       },
       "titulo": "teste",
-      "projeto": "Teste 01",
+      "projeto": "Portal",
       "tipo": "Feature",
       "prioridade": "Medium",
       "status": "Atualizar Prod",
@@ -311,6 +317,71 @@
       "dataFinal": "2026-08-08",
       "descricao": "tretertere",
       "id": "2MuWDmlkoRI"
+    },
+    {
+      "nome": "Portal",
+      "chave": "PORTAL",
+      "cliente": "ER7",
+      "responsavel": "Carlos Dias",
+      "usuarios": [
+        "S29NA9QB8nU",
+        "wa6VvqYMizw",
+        "nuAsFZ3nS90",
+        "QtMJtNckZ1o",
+        "OKERV7sJ5Ik",
+        "hpm_03V9q_0",
+        "xjLCPZdi52Q",
+        "OJr68Cm79y8"
+      ],
+      "status": "Ativo",
+      "dataInicio": "2026-04-01",
+      "dataFinal": null,
+      "descricao": "Projeto criado com base nos tickets cadastrados na coleção.",
+      "listasKanban": [
+        {
+          "id": "lista-backlog",
+          "nome": "Backlog",
+          "cor": "#fef3c7",
+          "descricao": "8 tickets em Backlog.",
+          "ordem": 1
+        },
+        {
+          "id": "lista-em-progresso",
+          "nome": "Em Progresso",
+          "cor": "#d1fae5",
+          "descricao": "1 ticket em Em Progresso.",
+          "ordem": 2
+        },
+        {
+          "id": "lista-atualizar-homol",
+          "nome": "Atualizar Homol",
+          "cor": "#e0f2fe",
+          "descricao": "2 tickets em Atualizar Homol.",
+          "ordem": 3
+        },
+        {
+          "id": "lista-validar-homl",
+          "nome": "Validar Homl",
+          "cor": "#fce7f3",
+          "descricao": "1 ticket em Validar Homl.",
+          "ordem": 4
+        },
+        {
+          "id": "lista-atualizar-prod",
+          "nome": "Atualizar Prod",
+          "cor": "#ede9fe",
+          "descricao": "1 ticket em Atualizar Prod.",
+          "ordem": 5
+        },
+        {
+          "id": "lista-finalizado",
+          "nome": "Finalizado",
+          "cor": "#dcfce7",
+          "descricao": "1 ticket em Finalizado.",
+          "ordem": 6
+        }
+      ],
+      "id": "PRJ-PORTAL"
     }
   ],
   "usuarios": [

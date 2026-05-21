@@ -6,11 +6,15 @@ import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { Tooltip } from 'primeng/tooltip';
 import { catchError, forkJoin, map, of } from 'rxjs';
+import { Projeto, ProjetoListaKanban, ProjetosService } from '../../projetos/projetos-service';
 import { TICKET_KANBAN_COLUMNS, TicketColumnOption } from '../kanban-columns';
 import { Ticket, TicketsService } from '../tickets-service';
 import { Usuario, UsuariosService } from '../usuarios-service';
 
 type KanbanColumn = TicketColumnOption & {
+  id?: string;
+  cor?: string;
+  descricao?: string;
   tickets: Ticket[];
 };
 
@@ -26,14 +30,18 @@ type ChecklistSummary = {
   styleUrl: './kanban.scss',
 })
 export class Kanban implements OnInit {
+  private readonly projetosService = inject(ProjetosService);
   private readonly ticketsService = inject(TicketsService);
   private readonly usuariosService = inject(UsuariosService);
 
   @Output() ticketsChanged = new EventEmitter<Ticket[]>();
 
-  columns: KanbanColumn[] = this.createEmptyColumns();
+  columns: KanbanColumn[] = [];
   checklistSummaries: Record<string, ChecklistSummary> = {};
   usuariosPorId: Record<string, Usuario> = {};
+  private currentTickets: Ticket[] = [];
+  private projetos: Projeto[] = [];
+  private projetosRequestVersion = 0;
 
   ngOnInit(): void {
     this.usuariosService.buscarUsuarios().subscribe((usuarios) => {
@@ -50,7 +58,8 @@ export class Kanban implements OnInit {
   }
 
   @Input() set tickets(tickets: Ticket[]) {
-    this.columns = this.createColumns(tickets);
+    this.currentTickets = tickets;
+    this.recarregarProjetos();
     this.loadChecklistSummaries(tickets);
   }
 
@@ -157,25 +166,35 @@ export class Kanban implements OnInit {
   }
 
   private createColumns(tickets: Ticket[]): KanbanColumn[] {
-    const columns = this.createEmptyColumns();
+    const columns = this.createEmptyColumns(tickets);
 
     for (const ticket of tickets) {
-      const column = columns.find((item) => item.value === this.resolveColumnValue(ticket)) ?? columns[0];
+      const column = columns.find((item) => item.value === this.resolveColumnValue(ticket, columns)) ?? columns[0];
       column.tickets.push(ticket);
     }
 
     return columns;
   }
 
-  private createEmptyColumns(): KanbanColumn[] {
-    return TICKET_KANBAN_COLUMNS.map((column) => ({
+  private createEmptyColumns(tickets: Ticket[] = []): KanbanColumn[] {
+    const projeto = this.findProjetoForTickets(tickets);
+    const listasKanban = projeto?.listasKanban?.length ? projeto.listasKanban : null;
+
+    if (listasKanban) {
+      return this.createProjectColumns(listasKanban);
+    }
+
+    return TICKET_KANBAN_COLUMNS.map((column, index) => ({
       ...column,
+      id: column.value,
+      cor: this.defaultColumnColor(index),
       tickets: [],
     }));
   }
 
   private emitTicketsChanged(): void {
-    this.ticketsChanged.emit(this.columns.flatMap((column) => column.tickets));
+    this.currentTickets = this.columns.flatMap((column) => column.tickets);
+    this.ticketsChanged.emit(this.currentTickets);
   }
 
   private loadChecklistSummaries(tickets: Ticket[]): void {
@@ -211,7 +230,7 @@ export class Kanban implements OnInit {
     });
   }
 
-  private resolveColumnValue(ticket: Ticket): string {
+  private resolveColumnValue(ticket: Ticket, columns: KanbanColumn[]): string {
     const columnValue = this.normalizeColumnValue(ticket.coluna ?? ticket.status);
 
     if (columnValue === 'em-andamento') {
@@ -222,7 +241,62 @@ export class Kanban implements OnInit {
       return 'validar-homl';
     }
 
-    return TICKET_KANBAN_COLUMNS.some((column) => column.value === columnValue) ? columnValue : 'backlog';
+    if (columns.some((column) => column.value === columnValue)) {
+      return columnValue;
+    }
+
+    const statusValue = this.normalizeColumnValue(ticket.status);
+    return columns.some((column) => column.value === statusValue) ? statusValue : columns[0]?.value ?? 'backlog';
+  }
+
+  private createProjectColumns(listasKanban: ProjetoListaKanban[]): KanbanColumn[] {
+    return [...listasKanban]
+      .filter((lista) => lista.nome.trim())
+      .sort((primeira, segunda) => primeira.ordem - segunda.ordem)
+      .map((lista) => ({
+        id: lista.id,
+        label: lista.nome,
+        value: this.normalizeColumnValue(lista.nome),
+        cor: lista.cor,
+        descricao: lista.descricao,
+        tickets: [],
+      }));
+  }
+
+  private findProjetoForTickets(tickets: Ticket[]): Projeto | undefined {
+    const projetoNome = tickets.find((ticket) => ticket.projeto)?.projeto;
+
+    if (!projetoNome) {
+      return undefined;
+    }
+
+    return this.projetos.find((projeto) => projeto.nome === projetoNome || projeto.id === projetoNome);
+  }
+
+  private defaultColumnColor(index: number): string {
+    return ['#fef3c7', '#d1fae5', '#e0f2fe', '#fce7f3', '#ede9fe', '#dcfce7'][index] ?? '#f3f4f6';
+  }
+
+  private recarregarProjetos(): void {
+    const requestVersion = ++this.projetosRequestVersion;
+
+    this.projetosService.buscarProjetos().subscribe({
+      next: (projetos) => {
+        if (requestVersion !== this.projetosRequestVersion) {
+          return;
+        }
+
+        this.projetos = projetos;
+        this.columns = this.createColumns(this.currentTickets);
+      },
+      error: () => {
+        if (requestVersion !== this.projetosRequestVersion) {
+          return;
+        }
+
+        this.columns = this.createColumns(this.currentTickets);
+      },
+    });
   }
 
   private normalizeColumnValue(value: string | undefined): string {

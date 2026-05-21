@@ -9,6 +9,5 @@ export const TICKET_KANBAN_COLUMNS: TicketColumnOption[] = [
   { label: 'Atualizar Homol', value: 'atualizar-homol' },
   { label: 'Validar Homl', value: 'validar-homl' },
   { label: 'Atualizar Prod', value: 'atualizar-prod' },
-  { label: 'Validar Prod', value: 'validar-prod' },
+  { label: 'Finalizado', value: 'finalizado' },
 ];
-
