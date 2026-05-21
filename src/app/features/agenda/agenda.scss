@@ -1,0 +1,236 @@
+:host {
+  display: block;
+}
+
+.agenda-page {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 8rem);
+}
+
+.agenda-calendar-shell {
+  background: #fff;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  flex: 1;
+  min-height: calc(100vh - 8rem);
+  overflow: hidden;
+  position: relative;
+}
+
+.agenda-loading,
+.agenda-message {
+  align-items: center;
+  color: var(--p-surface-700);
+  display: flex;
+  justify-content: center;
+}
+
+.agenda-loading {
+  background: color-mix(in srgb, var(--p-surface-0), transparent 18%);
+  inset: 0;
+  min-height: 18rem;
+  position: absolute;
+  z-index: 2;
+}
+
+.agenda-message {
+  border: 1px dashed var(--p-surface-300);
+  border-radius: 8px;
+  min-height: 12rem;
+}
+
+:host ::ng-deep .fc {
+  --fc-border-color: #dadce0;
+  --fc-neutral-bg-color: #fff;
+  --fc-page-bg-color: #fff;
+  --fc-today-bg-color: transparent;
+  color: #202124;
+  font-family: Arial, "Helvetica Neue", sans-serif;
+  height: 100%;
+}
+
+:host ::ng-deep .fc .fc-toolbar {
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+  min-height: 4.5rem;
+  padding: 0.75rem 1rem;
+}
+
+:host ::ng-deep .fc .fc-toolbar-title {
+  color: #3c4043;
+  font-size: 1.35rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+:host ::ng-deep .fc .fc-button {
+  background: #fff;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  box-shadow: none;
+  color: #3c4043;
+  font-size: 0.875rem;
+  font-weight: 500;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.75rem;
+  text-transform: none;
+}
+
+:host ::ng-deep .fc .fc-button:hover,
+:host ::ng-deep .fc .fc-button:focus {
+  background: #f8fafd;
+  border-color: #dadce0;
+  color: #202124;
+  outline: none;
+}
+
+:host ::ng-deep .fc .fc-button-primary:not(:disabled).fc-button-active,
+:host ::ng-deep .fc .fc-button-primary:not(:disabled):active {
+  background: #e8f0fe;
+  border-color: #d2e3fc;
+  color: #1967d2;
+}
+
+:host ::ng-deep .fc .fc-prev-button,
+:host ::ng-deep .fc .fc-next-button {
+  border-color: transparent;
+  border-radius: 50%;
+  height: 2.25rem;
+  padding: 0;
+  width: 2.25rem;
+}
+
+:host ::ng-deep .fc .fc-daygrid-day-number,
+:host ::ng-deep .fc .fc-col-header-cell-cushion,
+:host ::ng-deep .fc .fc-multimonth-title {
+  color: #3c4043;
+  text-decoration: none;
+}
+
+:host ::ng-deep .fc .fc-scrollgrid {
+  border: 0;
+}
+
+:host ::ng-deep .fc .fc-col-header-cell {
+  border-bottom: 1px solid #dadce0;
+  font-weight: 400;
+  padding: 0.35rem 0 0.5rem;
+}
+
+:host ::ng-deep .fc .fc-timegrid-axis,
+:host ::ng-deep .fc .fc-timegrid-slot-label {
+  color: #3c4043;
+  font-size: 0.75rem;
+}
+
+:host ::ng-deep .fc .fc-timegrid-axis-cushion,
+:host ::ng-deep .fc .fc-timegrid-slot-label-cushion {
+  padding: 0 0.5rem 0 0;
+}
+
+:host ::ng-deep .fc .fc-timegrid-slot {
+  height: 3.75rem;
+}
+
+:host ::ng-deep .fc .fc-timegrid-slot-minor {
+  border-top-style: solid;
+}
+
+:host ::ng-deep .fc .fc-timegrid-now-indicator-line {
+  border-color: #d93025;
+  border-width: 2px 0 0;
+}
+
+:host ::ng-deep .fc .fc-timegrid-now-indicator-arrow {
+  border-color: #d93025;
+  border-radius: 50%;
+  border-width: 5px;
+}
+
+:host ::ng-deep .fc .fc-timegrid-divider {
+  display: none;
+}
+
+:host ::ng-deep .fc .fc-timegrid-body {
+  background: #fff;
+}
+
+:host ::ng-deep .fc .fc-event {
+  border-left-width: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  line-height: 1.25;
+  padding: 0.1rem 0.2rem;
+}
+
+:host ::ng-deep .fc .fc-event-title {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+:host ::ng-deep .fc .fc-more-link {
+  color: #1967d2;
+  font-weight: 600;
+}
+
+:host ::ng-deep .google-day-header {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-height: 3.25rem;
+}
+
+:host ::ng-deep .google-day-header__weekday {
+  color: #3c4043;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+:host ::ng-deep .google-day-header__date {
+  align-items: center;
+  border-radius: 50%;
+  color: #3c4043;
+  display: inline-flex;
+  font-size: 1.7rem;
+  font-weight: 400;
+  height: 3rem;
+  justify-content: center;
+  line-height: 1;
+  width: 3rem;
+}
+
+:host ::ng-deep .google-day-header--today .google-day-header__weekday {
+  color: #1967d2;
+}
+
+:host ::ng-deep .google-day-header--today .google-day-header__date {
+  background: #1a73e8;
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .agenda-calendar-shell {
+    min-height: calc(100vh - 7rem);
+    overflow-x: auto;
+  }
+
+  :host ::ng-deep .fc {
+    min-width: 58rem;
+  }
+
+  :host ::ng-deep .fc .fc-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  :host ::ng-deep .fc .fc-toolbar-chunk {
+    display: flex;
+    justify-content: center;
+  }
+}

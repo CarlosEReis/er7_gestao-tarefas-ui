@@ -12,5 +12,9 @@ export const routes: Routes = [
   {
     path: 'usuarios',
     loadChildren: () => import('./features/usuarios/routes').then((m) => m.routes),
+  },
+  {
+    path: 'agenda',
+    loadChildren: () => import('./features/agenda/routes').then((m) => m.routes),
   }
 ];

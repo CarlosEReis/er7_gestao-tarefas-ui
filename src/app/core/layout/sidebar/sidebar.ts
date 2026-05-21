@@ -31,7 +31,7 @@ export class Sidebar {
         { label: 'Projetos', icon: 'pi pi-address-book', routerLink: ['/projetos'] },
         { label: 'Tickets', icon: 'pi pi-list-check', routerLink: ['/tickets'] },
         { label: 'Releases', icon: 'pi pi-box' },
-        { label: 'Agenda', icon: 'pi pi-calendar' },
+        { label: 'Agenda', icon: 'pi pi-calendar', routerLink: ['/agenda'] },
         { label: 'Usuários', icon: 'pi pi-users', routerLink: ['/usuarios'] },
         /*{ label: 'Kanban', icon: 'pi pi-bars' },
         { label: 'Mail', icon: 'pi pi-envelope', badge: 'v' },

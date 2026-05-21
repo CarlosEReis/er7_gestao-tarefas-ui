@@ -20,8 +20,8 @@
         "bug",
         "Torre"
       ],
-      "dataInicio": "2026-04-01",
-      "dataFinal": null,
+      "dataInicio": "2026-05-18",
+      "dataFinal": "2026-05-20",
       "membros": [
         "S29NA9QB8nU",
         "wa6VvqYMizw",
@@ -45,9 +45,11 @@
       "branch": "feature/add-csv-export",
       "descricao": "teste",
       "etiquetas": [],
-      "dataInicio": "2026-04-01",
-      "dataFinal": null,
-      "membros": [],
+      "dataInicio": "2026-05-19",
+      "dataFinal": "2026-05-22",
+      "membros": [
+        "wa6VvqYMizw"
+      ],
       "coluna": "em-progresso"
     },
     {
@@ -66,10 +68,10 @@
       "branch": "feature/optimize-dashboard-query",
       "descricao": "",
       "etiquetas": [],
-      "dataInicio": "2026-04-01",
-      "dataFinal": null,
+      "dataInicio": "2026-05-19",
+      "dataFinal": "2026-05-21",
       "membros": [
-        5
+        "nuAsFZ3nS90"
       ],
       "coluna": "atualizar-homol"
     },
@@ -87,6 +89,13 @@
       "prioridade": "High",
       "status": "Finalizado",
       "branch": "bugfix/user-profile-save-error",
+      "descricao": "",
+      "etiquetas": [],
+      "dataInicio": "2026-05-18",
+      "dataFinal": "2026-05-22",
+      "membros": [
+        "QtMJtNckZ1o"
+      ],
       "coluna": "finalizado"
     },
     {
@@ -103,6 +112,13 @@
       "prioridade": "Medium",
       "status": "A Fazer",
       "branch": "refactor/table-component",
+      "descricao": "",
+      "etiquetas": [],
+      "dataInicio": "2026-05-20",
+      "dataFinal": "2026-05-22",
+      "membros": [
+        "OKERV7sJ5Ik"
+      ],
       "coluna": "a-fazer"
     },
     {
@@ -121,8 +137,8 @@
       "branch": "feature/settings-screen-dev",
       "descricao": "",
       "etiquetas": [],
-      "dataInicio": "2026-05-11",
-      "dataFinal": null,
+      "dataInicio": "2026-05-20",
+      "dataFinal": "2026-05-22",
       "membros": [
         "hpm_03V9q_0"
       ],
@@ -142,6 +158,13 @@
       "prioridade": "Medium",
       "status": "Backlog",
       "branch": "feature/implement-data-cache",
+      "descricao": "",
+      "etiquetas": [],
+      "dataInicio": "2026-05-19",
+      "dataFinal": "2026-05-20",
+      "membros": [
+        "OKERV7sJ5Ik"
+      ],
       "coluna": "backlog"
     },
     {
@@ -158,6 +181,13 @@
       "prioridade": "Medium",
       "status": "Backlog",
       "branch": "documentation/update-tech-docs",
+      "descricao": "",
+      "etiquetas": [],
+      "dataInicio": "2026-05-18",
+      "dataFinal": "2026-05-20",
+      "membros": [
+        "xjLCPZdi52Q"
+      ],
       "coluna": "backlog"
     },
     {
@@ -174,6 +204,13 @@
       "prioridade": "Medium",
       "status": "Backlog",
       "branch": "test/create-e2e-tests",
+      "descricao": "",
+      "etiquetas": [],
+      "dataInicio": "2026-05-18",
+      "dataFinal": "2026-05-20",
+      "membros": [
+        "wa6VvqYMizw"
+      ],
       "coluna": "backlog"
     },
     {
@@ -190,6 +227,13 @@
       "prioridade": "Medium",
       "status": "Backlog",
       "branch": "refactor/user-module",
+      "descricao": "",
+      "etiquetas": [],
+      "dataInicio": "2026-05-19",
+      "dataFinal": "2026-05-22",
+      "membros": [
+        "QtMJtNckZ1o"
+      ],
       "coluna": "backlog"
     },
     {
@@ -206,6 +250,13 @@
       "prioridade": "Medium",
       "status": "Backlog",
       "branch": "devops/configure-ci-cd",
+      "descricao": "",
+      "etiquetas": [],
+      "dataInicio": "2026-05-19",
+      "dataFinal": "2026-05-20",
+      "membros": [
+        "hpm_03V9q_0"
+      ],
       "coluna": "backlog"
     },
     {
@@ -226,11 +277,10 @@
       "etiquetas": [
         "teste"
       ],
-      "dataInicio": "2026-05-15",
-      "dataFinal": "2026-05-18",
+      "dataInicio": "2026-05-19",
+      "dataFinal": "2026-05-22",
       "membros": [
-        1,
-        3
+        "OJr68Cm79y8"
       ],
       "coluna": "backlog"
     },
@@ -252,10 +302,10 @@
       "etiquetas": [
         "teste"
       ],
-      "dataInicio": "2026-05-15",
-      "dataFinal": null,
+      "dataInicio": "2026-05-21",
+      "dataFinal": "2026-05-22",
       "membros": [
-        2
+        "S29NA9QB8nU"
       ],
       "coluna": "backlog"
     },
@@ -341,14 +391,14 @@
         {
           "id": "lista-backlog",
           "nome": "Backlog",
-          "cor": "#fef3c7",
+          "cor": "#c0bfbc",
           "descricao": "8 tickets em Backlog.",
           "ordem": 1
         },
         {
           "id": "lista-544850fd-b369-4d96-97f1-56dfdaf7d388",
           "nome": "A Fazer",
-          "cor": "#38bdf8",
+          "cor": "#ffbe6f",
           "descricao": "Tarefas filtradas do backlog",
           "ordem": 2
         },
@@ -362,21 +412,21 @@
         {
           "id": "lista-atualizar-homol",
           "nome": "Atualizar Homol",
-          "cor": "#e0f2fe",
+          "cor": "#38bdf8",
           "descricao": "2 tickets em Atualizar Homol.",
           "ordem": 4
         },
         {
           "id": "lista-validar-homl",
           "nome": "Validar Homl",
-          "cor": "#fce7f3",
+          "cor": "#f9f06b",
           "descricao": "1 ticket em Validar Homl.",
           "ordem": 5
         },
         {
           "id": "lista-atualizar-prod",
           "nome": "Atualizar Prod",
-          "cor": "#ede9fe",
+          "cor": "#f59e0b",
           "descricao": "1 ticket em Atualizar Prod.",
           "ordem": 6
         },

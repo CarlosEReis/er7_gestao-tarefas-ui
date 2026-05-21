@@ -1,0 +1,15 @@
+<div class="agenda-page">
+  @if (erro()) {
+    <div class="agenda-message" role="alert">
+      {{ erro() }}
+    </div>
+  } @else {
+    <section class="agenda-calendar-shell" aria-label="Calendário de tickets">
+      @if (carregando()) {
+        <div class="agenda-loading">Carregando agenda...</div>
+      }
+
+      <full-calendar [options]="calendarOptions" [events]="eventos()"></full-calendar>
+    </section>
+  }
+</div>
