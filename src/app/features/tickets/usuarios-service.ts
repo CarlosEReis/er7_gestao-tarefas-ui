@@ -3,14 +3,14 @@ import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 
 export type Usuario = {
-  id: number;
-  apiId?: string;
+  id: string;
+  legadoId?: number;
   nome: string;
   foto: string;
 };
 
 type UsuarioApi = {
-  id?: string;
+  id: string;
   nome: string;
   foto: string;
 };
@@ -30,20 +30,10 @@ export class UsuariosService {
 
   buscarUsuarios(): Observable<Usuario[]> {
     return this.http.get<UsuarioApi[]>(this.apiUrl).pipe(
-      map((usuarios) => {
-        let proximoId = 4;
-
-        return usuarios.map((usuario) => {
-          const idLegado = this.idsLegadosPorNome.get(usuario.nome);
-          const id = idLegado ?? proximoId++;
-
-          return {
-            ...usuario,
-            id,
-            apiId: usuario.id,
-          };
-        });
-      }),
+      map((usuarios) => usuarios.map((usuario) => ({
+        ...usuario,
+        legadoId: this.idsLegadosPorNome.get(usuario.nome),
+      }))),
     );
   }
 }

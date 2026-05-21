@@ -21,7 +21,7 @@ export type Ticket = {
   etiquetas?: string[];
   dataInicio?: string | null;
   dataFinal?: string | null;
-  membros?: number[];
+  membros?: Array<string | number>;
   coluna?: string;
 };
 

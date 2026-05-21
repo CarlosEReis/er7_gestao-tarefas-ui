@@ -29,7 +29,8 @@ type Option = {
 };
 
 type Member = {
-  id: number;
+  id: string;
+  legadoId?: number;
   nome: string;
   foto: string;
 };
@@ -119,7 +120,7 @@ export class Form implements OnInit {
     etiquetas: this.formBuilder.control<string[]>([]),
     descricao: this.formBuilder.control(''),
     dataRange: this.formBuilder.control<Date[] | null>(null),
-    membrosSelecionados: this.formBuilder.control<number[]>([]),
+    membrosSelecionados: this.formBuilder.control<string[]>([]),
   });
 
   private ticketOriginal: Ticket | null = null;
@@ -578,7 +579,7 @@ export class Form implements OnInit {
           etiquetas: ticket.etiquetas ?? [],
           colunaSelecionada: this.colunaParaValor(ticket.coluna, ticket.status),
           dataRange: this.montarDataRange(ticket.dataInicio ?? ticket.dtAbertura, ticket.dataFinal ?? null),
-          membrosSelecionados: ticket.membros ?? this.mapearMembrosPorNome(ticket.desenvolvedor?.nome),
+          membrosSelecionados: this.normalizarMembrosTicket(ticket.membros, ticket.desenvolvedor?.nome),
         });
         this.descricaoHtmlAtual = ticket.descricao ?? '';
         this.carregarChecklist(ticket.id);
@@ -594,6 +595,11 @@ export class Form implements OnInit {
     this.usuariosService.buscarUsuarios().subscribe({
       next: (usuarios) => {
         this.membrosDisponiveis = usuarios;
+        if (this.ticketOriginal) {
+          this.ticketForm.controls.membrosSelecionados.setValue(
+            this.normalizarMembrosTicket(this.ticketOriginal.membros, this.ticketOriginal.desenvolvedor?.nome),
+          );
+        }
       },
     });
   }
@@ -994,7 +1000,7 @@ export class Form implements OnInit {
     };
   }
 
-  private buscarDesenvolvedorSelecionado(membrosSelecionados: number[]): { nome: string; foto: string } | null {
+  private buscarDesenvolvedorSelecionado(membrosSelecionados: string[]): { nome: string; foto: string } | null {
     const idMembro = membrosSelecionados[0];
     if (!idMembro) {
       return null;
@@ -1011,7 +1017,32 @@ export class Form implements OnInit {
     };
   }
 
-  private mapearMembrosPorNome(nome: string | undefined): number[] {
+  private normalizarMembrosTicket(membros: Array<string | number> | undefined, nomeDesenvolvedor: string | undefined): string[] {
+    const ids = (membros ?? [])
+      .map((id) => this.resolverUsuarioId(id))
+      .filter((id): id is string => !!id);
+
+    if (ids.length) {
+      return Array.from(new Set(ids));
+    }
+
+    return this.mapearMembrosPorNome(nomeDesenvolvedor);
+  }
+
+  private resolverUsuarioId(id: string | number): string | null {
+    const idNormalizado = String(id);
+    const usuario = this.membrosDisponiveis.find((membro) => (
+      membro.id === idNormalizado || String(membro.legadoId ?? '') === idNormalizado
+    ));
+
+    if (usuario) {
+      return usuario.id;
+    }
+
+    return typeof id === 'string' ? id : null;
+  }
+
+  private mapearMembrosPorNome(nome: string | undefined): string[] {
     if (!nome) {
       return [];
     }

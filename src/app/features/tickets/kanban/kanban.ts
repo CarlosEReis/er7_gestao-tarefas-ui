@@ -38,10 +38,10 @@ export class Kanban implements OnInit {
   ngOnInit(): void {
     this.usuariosService.buscarUsuarios().subscribe((usuarios) => {
       this.usuariosPorId = usuarios.reduce<Record<string, Usuario>>((acc, usuario) => {
-        acc[String(usuario.id)] = usuario;
+        acc[usuario.id] = usuario;
 
-        if (usuario.apiId) {
-          acc[usuario.apiId] = usuario;
+        if (usuario.legadoId) {
+          acc[String(usuario.legadoId)] = usuario;
         }
 
         return acc;
@@ -130,7 +130,7 @@ export class Kanban implements OnInit {
   }
 
   trackMember(_index: number, member: Usuario): string {
-    return String(member.apiId ?? member.id);
+    return member.id;
   }
 
   checklistSummary(ticket: Ticket): ChecklistSummary {
