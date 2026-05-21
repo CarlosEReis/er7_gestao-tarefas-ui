@@ -1,0 +1,13 @@
+.usuarios-list__photo {
+  max-width: 24rem;
+  overflow: hidden;
+  color: var(--text-color-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.usuarios-list__empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-color-secondary);
+}

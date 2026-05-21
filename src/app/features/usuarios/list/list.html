@@ -1,0 +1,27 @@
+<p-table [value]="usuarios()" size="small" selectionMode="single">
+  <ng-template #header>
+    <tr>
+      <th style="width: 5rem">Foto</th>
+      <th>Nome</th>
+      <th>URL da foto</th>
+      <th style="width: 6rem">Ações</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-usuario>
+    <tr>
+      <td>
+        <p-avatar [image]="usuario.foto" shape="circle" [ariaLabel]="usuario.nome" />
+      </td>
+      <td>{{ usuario.nome }}</td>
+      <td class="usuarios-list__photo">{{ usuario.foto }}</td>
+      <td>
+        <p-button icon="pi pi-pencil" severity="secondary" rounded [routerLink]="[usuario.id, 'detalhe']" />
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template #emptymessage>
+    <tr>
+      <td colspan="4" class="usuarios-list__empty">Nenhum usuário cadastrado</td>
+    </tr>
+  </ng-template>
+</p-table>
