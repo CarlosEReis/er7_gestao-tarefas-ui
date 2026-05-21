@@ -17,7 +17,7 @@
     <tr>
       <td>{{ ticket.ticketId }}</td>
       <td>{{ ticket.dtAbertura }}</td>
-      <td style="text-align: center !important;">
+      <td style="text-align: center !important; padding: none !important;">
         <p-avatar [image]="ticket.desenvolvedor.foto" pTooltip="{{ ticket.desenvolvedor.nome }}" shape="circle" style="vertical-align: middle"/>
       </td>
       <td>{{ ticket.titulo }}</td>
@@ -28,7 +28,9 @@
       <td>
         <p-tag [value]="ticket.prioridade" [severity]="getSeverityPriority(ticket.prioridade)" />
       </td>
-      <td> {{ ticket.status }}</td>
+      <td class="tickets-list__status-cell" [style.background-color]="statusColor(ticket)">
+        {{ ticket.status }}
+      </td>
       <td>{{ ticket.branch }}</td>
       <td>
         <p-button icon="pi pi-pencil" severity="secondary" rounded [routerLink]="[ticket.id ?? ticket.ticketId, 'detalhe']" />

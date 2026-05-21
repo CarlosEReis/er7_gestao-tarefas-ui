@@ -41,14 +41,14 @@
       "projeto": "Portal",
       "tipo": "Feature",
       "prioridade": "Medium",
-      "status": "Backlog",
+      "status": "Em Progresso",
       "branch": "feature/add-csv-export",
       "descricao": "teste",
       "etiquetas": [],
       "dataInicio": "2026-04-01",
       "dataFinal": null,
       "membros": [],
-      "coluna": "backlog"
+      "coluna": "em-progresso"
     },
     {
       "id": "20260401.T03",
@@ -101,9 +101,9 @@
       "projeto": "Portal",
       "tipo": "Feature",
       "prioridade": "Medium",
-      "status": "Em Progresso",
+      "status": "A Fazer",
       "branch": "refactor/table-component",
-      "coluna": "em-progresso"
+      "coluna": "a-fazer"
     },
     {
       "id": "20260511.T74",
@@ -346,39 +346,46 @@
           "ordem": 1
         },
         {
+          "id": "lista-544850fd-b369-4d96-97f1-56dfdaf7d388",
+          "nome": "A Fazer",
+          "cor": "#38bdf8",
+          "descricao": "Tarefas filtradas do backlog",
+          "ordem": 2
+        },
+        {
           "id": "lista-em-progresso",
           "nome": "Em Progresso",
-          "cor": "#d1fae5",
+          "cor": "#22c55e",
           "descricao": "1 ticket em Em Progresso.",
-          "ordem": 2
+          "ordem": 3
         },
         {
           "id": "lista-atualizar-homol",
           "nome": "Atualizar Homol",
           "cor": "#e0f2fe",
           "descricao": "2 tickets em Atualizar Homol.",
-          "ordem": 3
+          "ordem": 4
         },
         {
           "id": "lista-validar-homl",
           "nome": "Validar Homl",
           "cor": "#fce7f3",
           "descricao": "1 ticket em Validar Homl.",
-          "ordem": 4
+          "ordem": 5
         },
         {
           "id": "lista-atualizar-prod",
           "nome": "Atualizar Prod",
           "cor": "#ede9fe",
           "descricao": "1 ticket em Atualizar Prod.",
-          "ordem": 5
+          "ordem": 6
         },
         {
           "id": "lista-finalizado",
           "nome": "Finalizado",
           "cor": "#dcfce7",
           "descricao": "1 ticket em Finalizado.",
-          "ordem": 6
+          "ordem": 7
         }
       ],
       "id": "PRJ-PORTAL"
