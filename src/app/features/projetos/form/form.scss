@@ -51,6 +51,44 @@
   resize: vertical;
 }
 
+.projeto-form__usuarios-selecionados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 0.25rem;
+}
+
+.projeto-form__usuario-vinculado {
+  align-items: center;
+  background: var(--p-content-hover-background);
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 0.375rem;
+  color: var(--p-text-color);
+  display: inline-flex;
+  font-size: 0.875rem;
+  font-weight: 600;
+  gap: 0.5rem;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0.35rem 0.55rem 0.35rem 0.35rem;
+}
+
+.projeto-form__usuario-vinculado span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:host ::ng-deep .projeto-form__usuario-avatar.p-avatar {
+  flex: 0 0 auto;
+  height: 1.8rem;
+  width: 1.8rem;
+}
+
+:host ::ng-deep .projeto-form__usuario-avatar .p-avatar-image {
+  object-fit: cover;
+}
+
 .projeto-form__footer {
   display: flex;
   justify-content: flex-end;

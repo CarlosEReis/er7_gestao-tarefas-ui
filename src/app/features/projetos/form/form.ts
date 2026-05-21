@@ -1,12 +1,15 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AvatarModule } from 'primeng/avatar';
 import { Button } from 'primeng/button';
 import { DatePicker } from 'primeng/datepicker';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
+import { MultiSelect } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
+import { Usuario, UsuariosService } from '../../usuarios/usuarios-service';
 import { Projeto, ProjetosService, ProjetoStatus } from '../projetos-service';
 
 type StatusOption = {
@@ -16,7 +19,7 @@ type StatusOption = {
 
 @Component({
   selector: 'app-projeto-form',
-  imports: [Button, DatePicker, Dialog, InputText, ReactiveFormsModule, Select, Textarea],
+  imports: [AvatarModule, Button, DatePicker, Dialog, InputText, MultiSelect, ReactiveFormsModule, Select, Textarea],
   templateUrl: './form.html',
   styleUrl: './form.scss',
 })
@@ -25,11 +28,14 @@ export class Form implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly projetosService = inject(ProjetosService);
+  private readonly usuariosService = inject(UsuariosService);
   private readonly formBuilder = inject(NonNullableFormBuilder);
 
   visible = true;
   salvando = false;
+  usuariosCarregando = false;
   isEdicao = false;
+  usuariosDisponiveis: Usuario[] = [];
   statusOptions: StatusOption[] = [
     { label: 'Ativo', value: 'Ativo' },
     { label: 'Pausado', value: 'Pausado' },
@@ -41,6 +47,7 @@ export class Form implements OnInit {
     chave: this.formBuilder.control('', { validators: [Validators.required] }),
     cliente: this.formBuilder.control('', { validators: [Validators.required] }),
     responsavel: this.formBuilder.control('', { validators: [Validators.required] }),
+    usuarios: this.formBuilder.control<string[]>([], { validators: [Validators.required] }),
     status: this.formBuilder.control<ProjetoStatus>('Ativo', { validators: [Validators.required] }),
     dataInicio: this.formBuilder.control<Date | null>(new Date(), { validators: [Validators.required] }),
     dataFinal: this.formBuilder.control<Date | null>(null),
@@ -50,6 +57,8 @@ export class Form implements OnInit {
   private projetoOriginal: Projeto | null = null;
 
   ngOnInit(): void {
+    this.carregarUsuarios();
+
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       return;
@@ -80,6 +89,7 @@ export class Form implements OnInit {
       chave: this.projetoForm.controls.chave.value.trim().toUpperCase(),
       cliente: this.projetoForm.controls.cliente.value.trim(),
       responsavel: this.projetoForm.controls.responsavel.value.trim(),
+      usuarios: this.projetoForm.controls.usuarios.value,
       status: this.projetoForm.controls.status.value,
       dataInicio: this.dataParaString(this.projetoForm.controls.dataInicio.value) ?? '',
       dataFinal: this.dataParaString(this.projetoForm.controls.dataFinal.value),
@@ -107,6 +117,7 @@ export class Form implements OnInit {
           chave: projeto.chave,
           cliente: projeto.cliente,
           responsavel: projeto.responsavel,
+          usuarios: projeto.usuarios ?? [],
           status: projeto.status,
           dataInicio: this.stringParaData(projeto.dataInicio),
           dataFinal: this.stringParaData(projeto.dataFinal ?? null),
@@ -114,6 +125,28 @@ export class Form implements OnInit {
         });
       },
       error: () => this.fechar(),
+    });
+  }
+
+  get usuariosSelecionados(): Usuario[] {
+    const idsSelecionados = this.projetoForm.controls.usuarios.value;
+
+    return idsSelecionados
+      .map((id) => this.usuariosDisponiveis.find((usuario) => usuario.id === id))
+      .filter((usuario): usuario is Usuario => !!usuario);
+  }
+
+  private carregarUsuarios(): void {
+    this.usuariosCarregando = true;
+
+    this.usuariosService.buscarUsuarios().subscribe({
+      next: (usuarios) => {
+        this.usuariosDisponiveis = usuarios;
+        this.usuariosCarregando = false;
+      },
+      error: () => {
+        this.usuariosCarregando = false;
+      },
     });
   }
 

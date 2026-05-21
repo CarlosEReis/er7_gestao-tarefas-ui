@@ -50,6 +50,41 @@
           <input pInputText id="responsavel" formControlName="responsavel" placeholder="Responsável" />
         </div>
 
+        <div class="projeto-form__field projeto-form__field--wide">
+          <label for="usuarios">Usuários vinculados</label>
+          <p-multiselect
+            inputId="usuarios"
+            [options]="usuariosDisponiveis"
+            optionLabel="nome"
+            optionValue="id"
+            formControlName="usuarios"
+            [filter]="true"
+            filterBy="nome"
+            placeholder="Selecione um ou mais usuários"
+            selectedItemsLabel="{0} usuários selecionados"
+            emptyMessage="Nenhum usuário cadastrado"
+            emptyFilterMessage="Nenhum usuário encontrado"
+            [loading]="usuariosCarregando"
+            styleClass="w-full"
+          />
+
+          @if (usuariosSelecionados.length > 0) {
+            <div class="projeto-form__usuarios-selecionados">
+              @for (usuario of usuariosSelecionados; track usuario.id) {
+                <div class="projeto-form__usuario-vinculado">
+                  <p-avatar
+                    [image]="usuario.foto"
+                    shape="circle"
+                    class="projeto-form__usuario-avatar"
+                    [ariaLabel]="usuario.nome"
+                  />
+                  <span>{{ usuario.nome }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
         <div class="projeto-form__field">
           <label for="dataInicio">Início</label>
           <p-datepicker inputId="dataInicio" formControlName="dataInicio" [showIcon]="true" [showOnFocus]="false" dateFormat="dd/mm/yy" class="w-full" />

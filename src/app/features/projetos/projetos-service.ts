@@ -10,6 +10,7 @@ export type Projeto = {
   chave: string;
   cliente: string;
   responsavel: string;
+  usuarios?: string[];
   status: ProjetoStatus;
   dataInicio: string;
   dataFinal?: string | null;
