@@ -391,7 +391,7 @@
         {
           "id": "lista-backlog",
           "nome": "Backlog",
-          "cor": "#c0bfbc",
+          "cor": "#dc8add",
           "descricao": "8 tickets em Backlog.",
           "ordem": 1
         },

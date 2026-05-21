@@ -1,7 +1,7 @@
 <div class="kanban-board" cdkDropListGroup>
   @for (column of columns; track column.id ?? column.value) {
-    <section class="kanban-column" [style.--kanban-column-bg]="column.cor">
-      <header class="kanban-column__header">
+    <section class="kanban-column">
+      <header class="kanban-column__header" [style.--kanban-column-header-bg]="column.cor">
         <div>
           <span class="kanban-column__title">{{ column.label }}</span>
           <span class="kanban-column__count">{{ column.tickets.length }}</span>
