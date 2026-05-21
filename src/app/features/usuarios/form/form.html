@@ -1,0 +1,42 @@
+<p-dialog
+  [modal]="true"
+  [visible]="visible"
+  [showHeader]="false"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '36rem' }"
+  [breakpoints]="{ '1199px': '84vw', '767px': '96vw' }"
+  [contentStyle]="{ padding: '0' }"
+  (onHide)="onDialogHide()"
+>
+  <form class="usuario-form" [formGroup]="usuarioForm" (ngSubmit)="salvar()">
+    <div class="usuario-form__topbar">
+      <span>{{ isEdicao ? 'Editar usuário' : 'Novo usuário' }}</span>
+      <p-button icon="pi pi-times" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Fechar" type="button" (onClick)="fechar()" />
+    </div>
+
+    <div class="usuario-form__content">
+      <div class="usuario-form__preview">
+        <p-avatar [image]="fotoPreview" shape="circle" size="xlarge" ariaLabel="Prévia do usuário" />
+      </div>
+
+      <div class="usuario-form__grid">
+        <div class="usuario-form__field">
+          <label for="nome">Nome</label>
+          <input pInputText id="nome" formControlName="nome" placeholder="Nome do usuário" />
+        </div>
+
+        <div class="usuario-form__field">
+          <label for="foto">URL da foto</label>
+          <input pInputText id="foto" formControlName="foto" placeholder="https://..." />
+        </div>
+      </div>
+    </div>
+
+    <footer class="usuario-form__footer">
+      <p-button label="Cancelar" severity="secondary" [text]="true" type="button" (onClick)="fechar()" />
+      <p-button label="Salvar" icon="pi pi-check" type="submit" [loading]="salvando" />
+    </footer>
+  </form>
+</p-dialog>
