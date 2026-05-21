@@ -1,0 +1,20 @@
+<router-outlet></router-outlet>
+
+<div class="usuarios-page__header">
+  <div class="usuarios-page__title">
+    <h1>Listagem de Usuários</h1>
+  </div>
+
+  <div class="usuarios-page__actions">
+    <p-button icon="pi pi-plus" [rounded]="true" routerLink="novo" />
+
+    <p-fluid>
+      <span class="usuarios-page__search">
+        <i class="pi pi-search"></i>
+        <input pInputText [(ngModel)]="busca" placeholder="Pesquisar usuário" />
+      </span>
+    </p-fluid>
+  </div>
+</div>
+
+<app-usuarios-list [usuarios]="usuariosFiltrados"></app-usuarios-list>
