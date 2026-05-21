@@ -51,6 +51,141 @@
   resize: vertical;
 }
 
+.projeto-form__kanban {
+  border-top: 1px solid var(--surface-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+  padding-top: 1rem;
+}
+
+.projeto-form__kanban-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.projeto-form__kanban-header span {
+  color: var(--text-color);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.projeto-form__kanban-board {
+  align-items: stretch;
+  display: flex;
+  gap: 0.75rem;
+  min-height: 12rem;
+  overflow-x: auto;
+  padding: 0.125rem 0 0.5rem;
+}
+
+.projeto-form__kanban-column {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-top: 0.25rem solid var(--lista-cor);
+  border-radius: 0.5rem;
+  cursor: grab;
+  display: flex;
+  flex: 0 0 14rem;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 11rem;
+  padding: 0.75rem;
+}
+
+.projeto-form__kanban-column-header {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.projeto-form__kanban-column-title {
+  align-items: center;
+  display: flex;
+  font-size: 0.925rem;
+  font-weight: 700;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.projeto-form__kanban-column-title span:last-child {
+  overflow-wrap: anywhere;
+}
+
+.projeto-form__kanban-swatch {
+  background: var(--lista-cor);
+  border-radius: 999px;
+  flex: 0 0 auto;
+  height: 0.75rem;
+  width: 0.75rem;
+}
+
+.projeto-form__kanban-actions {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.125rem;
+}
+
+.projeto-form__kanban-description {
+  color: var(--text-color-secondary);
+  font-size: 0.825rem;
+  line-height: 1.35;
+  margin: 0;
+  min-height: 2.25rem;
+  overflow-wrap: anywhere;
+}
+
+.projeto-form__kanban-lane {
+  align-items: center;
+  background: var(--p-content-hover-background);
+  border: 1px dashed var(--surface-border);
+  border-radius: 0.375rem;
+  color: var(--p-text-muted-color);
+  display: flex;
+  flex: 1;
+  font-size: 0.8rem;
+  justify-content: center;
+  min-height: 3rem;
+}
+
+.lista-kanban-form__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lista-kanban-form__color-input {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  height: 2.5rem;
+  padding: 0;
+  width: 5rem;
+}
+
+.lista-kanban-form__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.lista-kanban-form__swatch {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  height: 1.75rem;
+  width: 1.75rem;
+}
+
+.lista-kanban-form__swatch--selected {
+  border-color: var(--text-color);
+}
+
 .projeto-form__usuarios-selecionados {
   display: flex;
   flex-wrap: wrap;
@@ -100,5 +235,14 @@
 @media (max-width: 767px) {
   .projeto-form__grid {
     grid-template-columns: 1fr;
+  }
+
+  .projeto-form__kanban-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .projeto-form__kanban-column {
+    flex-basis: 13rem;
   }
 }

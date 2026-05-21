@@ -1,5 +1,6 @@
+import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { Component, inject, OnInit } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AvatarModule } from 'primeng/avatar';
 import { Button } from 'primeng/button';
@@ -10,16 +11,23 @@ import { MultiSelect } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
 import { Usuario, UsuariosService } from '../../usuarios/usuarios-service';
-import { Projeto, ProjetosService, ProjetoStatus } from '../projetos-service';
+import { Projeto, ProjetoListaKanban, ProjetosService, ProjetoStatus } from '../projetos-service';
 
 type StatusOption = {
   label: string;
   value: ProjetoStatus;
 };
 
+type ListaKanbanForm = FormGroup<{
+  id: FormControl<string>;
+  nome: FormControl<string>;
+  cor: FormControl<string>;
+  descricao: FormControl<string>;
+}>;
+
 @Component({
   selector: 'app-projeto-form',
-  imports: [AvatarModule, Button, DatePicker, Dialog, InputText, MultiSelect, ReactiveFormsModule, Select, Textarea],
+  imports: [AvatarModule, Button, CdkDrag, CdkDropList, DatePicker, Dialog, InputText, MultiSelect, ReactiveFormsModule, Select, Textarea],
   templateUrl: './form.html',
   styleUrl: './form.scss',
 })
@@ -35,11 +43,23 @@ export class Form implements OnInit {
   salvando = false;
   usuariosCarregando = false;
   isEdicao = false;
+  listaKanbanModalVisivel = false;
+  listaKanbanEdicaoIndex: number | null = null;
   usuariosDisponiveis: Usuario[] = [];
   statusOptions: StatusOption[] = [
     { label: 'Ativo', value: 'Ativo' },
     { label: 'Pausado', value: 'Pausado' },
     { label: 'Concluído', value: 'Concluído' },
+  ];
+  coresListasKanban = [
+    '#64748b',
+    '#38bdf8',
+    '#f59e0b',
+    '#22c55e',
+    '#ef4444',
+    '#8b5cf6',
+    '#ec4899',
+    '#14b8a6',
   ];
 
   projetoForm = this.formBuilder.group({
@@ -51,6 +71,15 @@ export class Form implements OnInit {
     status: this.formBuilder.control<ProjetoStatus>('Ativo', { validators: [Validators.required] }),
     dataInicio: this.formBuilder.control<Date | null>(new Date(), { validators: [Validators.required] }),
     dataFinal: this.formBuilder.control<Date | null>(null),
+    descricao: this.formBuilder.control(''),
+    listasKanban: this.formBuilder.array<ListaKanbanForm>(
+      this.listasKanbanPadrao().map((lista) => this.criarListaKanbanForm(lista)),
+      { validators: [Validators.minLength(1)] },
+    ),
+  });
+  listaKanbanForm = this.formBuilder.group({
+    nome: this.formBuilder.control('', { validators: [Validators.required] }),
+    cor: this.formBuilder.control(this.coresListasKanban[0], { validators: [Validators.required] }),
     descricao: this.formBuilder.control(''),
   });
 
@@ -94,6 +123,7 @@ export class Form implements OnInit {
       dataInicio: this.dataParaString(this.projetoForm.controls.dataInicio.value) ?? '',
       dataFinal: this.dataParaString(this.projetoForm.controls.dataFinal.value),
       descricao: this.projetoForm.controls.descricao.value.trim(),
+      listasKanban: this.montarListasKanbanPayload(),
     };
 
     const request = this.isEdicao && this.projetoOriginal
@@ -123,9 +153,84 @@ export class Form implements OnInit {
           dataFinal: this.stringParaData(projeto.dataFinal ?? null),
           descricao: projeto.descricao ?? '',
         });
+        this.carregarListasKanban(projeto.listasKanban);
       },
       error: () => this.fechar(),
     });
+  }
+
+  get listasKanban() {
+    return this.projetoForm.controls.listasKanban;
+  }
+
+  abrirCriacaoListaKanban(): void {
+    this.listaKanbanEdicaoIndex = null;
+    this.listaKanbanForm.reset({
+      nome: '',
+      cor: this.coresListasKanban[this.listasKanban.length % this.coresListasKanban.length],
+      descricao: '',
+    });
+    this.listaKanbanModalVisivel = true;
+  }
+
+  abrirEdicaoListaKanban(index: number): void {
+    const lista = this.listasKanban.at(index);
+
+    this.listaKanbanEdicaoIndex = index;
+    this.listaKanbanForm.setValue({
+      nome: lista.controls.nome.value,
+      cor: lista.controls.cor.value,
+      descricao: lista.controls.descricao.value,
+    });
+    this.listaKanbanModalVisivel = true;
+  }
+
+  fecharListaKanbanModal(): void {
+    this.listaKanbanModalVisivel = false;
+  }
+
+  salvarListaKanbanModal(): void {
+    if (this.listaKanbanForm.invalid) {
+      this.listaKanbanForm.markAllAsTouched();
+      return;
+    }
+
+    const lista = {
+      nome: this.listaKanbanForm.controls.nome.value.trim(),
+      cor: this.listaKanbanForm.controls.cor.value,
+      descricao: this.listaKanbanForm.controls.descricao.value.trim(),
+    };
+
+    if (this.listaKanbanEdicaoIndex !== null) {
+      this.listasKanban.at(this.listaKanbanEdicaoIndex).patchValue(lista);
+      this.fecharListaKanbanModal();
+      return;
+    }
+
+    this.listasKanban.push(this.criarListaKanbanForm({
+      id: this.gerarIdLocal('lista'),
+      ...lista,
+      ordem: this.listasKanban.length + 1,
+    }));
+    this.fecharListaKanbanModal();
+  }
+
+  removerListaKanban(index: number): void {
+    if (this.listasKanban.length <= 1) {
+      return;
+    }
+
+    this.listasKanban.removeAt(index);
+  }
+
+  ordenarListasKanban(event: CdkDragDrop<ListaKanbanForm[]>): void {
+    if (event.previousIndex === event.currentIndex) {
+      return;
+    }
+
+    const lista = this.listasKanban.at(event.previousIndex);
+    this.listasKanban.removeAt(event.previousIndex);
+    this.listasKanban.insert(event.currentIndex, lista);
   }
 
   get usuariosSelecionados(): Usuario[] {
@@ -148,6 +253,67 @@ export class Form implements OnInit {
         this.usuariosCarregando = false;
       },
     });
+  }
+
+  private criarListaKanbanForm(lista: ProjetoListaKanban): ListaKanbanForm {
+    return this.formBuilder.group({
+      id: this.formBuilder.control(lista.id),
+      nome: this.formBuilder.control(lista.nome, { validators: [Validators.required] }),
+      cor: this.formBuilder.control(lista.cor, { validators: [Validators.required] }),
+      descricao: this.formBuilder.control(lista.descricao),
+    });
+  }
+
+  private carregarListasKanban(listas: ProjetoListaKanban[] | undefined): void {
+    this.listasKanban.clear();
+
+    const listasOrdenadas = [...(listas?.length ? listas : this.listasKanbanPadrao())]
+      .sort((primeira, segunda) => primeira.ordem - segunda.ordem);
+
+    for (const lista of listasOrdenadas) {
+      this.listasKanban.push(this.criarListaKanbanForm(lista));
+    }
+  }
+
+  private montarListasKanbanPayload(): ProjetoListaKanban[] {
+    return this.listasKanban.controls.map((control, index) => ({
+      id: control.controls.id.value || this.gerarIdLocal('lista'),
+      nome: control.controls.nome.value.trim(),
+      cor: control.controls.cor.value,
+      descricao: control.controls.descricao.value.trim(),
+      ordem: index + 1,
+    }));
+  }
+
+  private listasKanbanPadrao(): ProjetoListaKanban[] {
+    return [
+      {
+        id: this.gerarIdLocal('lista'),
+        nome: 'Backlog',
+        cor: '#64748b',
+        descricao: 'Itens priorizados para iniciar.',
+        ordem: 1,
+      },
+      {
+        id: this.gerarIdLocal('lista'),
+        nome: 'Em Progresso',
+        cor: '#38bdf8',
+        descricao: 'Itens em desenvolvimento.',
+        ordem: 2,
+      },
+      {
+        id: this.gerarIdLocal('lista'),
+        nome: 'Concluído',
+        cor: '#22c55e',
+        descricao: 'Itens finalizados.',
+        ordem: 3,
+      },
+    ];
+  }
+
+  private gerarIdLocal(prefixo: string): string {
+    const randomId = globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2, 10);
+    return `${prefixo}-${randomId}`;
   }
 
   private dataParaString(data: Date | null): string | null {

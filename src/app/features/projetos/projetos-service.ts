@@ -4,6 +4,14 @@ import { Observable } from 'rxjs';
 
 export type ProjetoStatus = 'Ativo' | 'Pausado' | 'Concluído';
 
+export type ProjetoListaKanban = {
+  id: string;
+  nome: string;
+  cor: string;
+  descricao: string;
+  ordem: number;
+};
+
 export type Projeto = {
   id: string;
   nome: string;
@@ -15,6 +23,7 @@ export type Projeto = {
   dataInicio: string;
   dataFinal?: string | null;
   descricao?: string;
+  listasKanban?: ProjetoListaKanban[];
 };
 
 export type NovoProjeto = Omit<Projeto, 'id'>;

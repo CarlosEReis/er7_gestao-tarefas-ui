@@ -5,7 +5,7 @@
   [draggable]="false"
   [resizable]="false"
   [dismissableMask]="true"
-  [style]="{ width: '42rem' }"
+  [style]="{ width: '54rem' }"
   [breakpoints]="{ '1199px': '84vw', '767px': '96vw' }"
   [contentStyle]="{ padding: '0' }"
   (onHide)="onDialogHide()"
@@ -99,12 +99,112 @@
           <label for="descricao">Descrição</label>
           <textarea pTextarea id="descricao" formControlName="descricao" rows="5" placeholder="Resumo do projeto"></textarea>
         </div>
+
+        <section class="projeto-form__kanban projeto-form__field--wide">
+          <div class="projeto-form__kanban-header">
+            <span>Listas Kanban</span>
+            <p-button
+              label="Adicionar lista"
+              icon="pi pi-plus"
+              severity="secondary"
+              [outlined]="true"
+              size="small"
+              type="button"
+              (onClick)="abrirCriacaoListaKanban()"
+            />
+          </div>
+
+          <div
+            class="projeto-form__kanban-board"
+            cdkDropList
+            cdkDropListOrientation="horizontal"
+            [cdkDropListData]="listasKanban.controls"
+            (cdkDropListDropped)="ordenarListasKanban($event)"
+          >
+            @for (lista of listasKanban.controls; track lista.controls.id.value; let index = $index) {
+              <article class="projeto-form__kanban-column" cdkDrag [style.--lista-cor]="lista.controls.cor.value">
+                <div class="projeto-form__kanban-column-header">
+                  <div class="projeto-form__kanban-column-title">
+                    <span class="projeto-form__kanban-swatch" aria-hidden="true"></span>
+                    <span>{{ lista.controls.nome.value }}</span>
+                  </div>
+
+                  <div class="projeto-form__kanban-actions">
+                    <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Editar lista" type="button" (onClick)="abrirEdicaoListaKanban(index)" />
+                    <p-button icon="pi pi-trash" [text]="true" [rounded]="true" severity="danger" ariaLabel="Remover lista" type="button" [disabled]="listasKanban.length <= 1" (onClick)="removerListaKanban(index)" />
+                  </div>
+                </div>
+
+                <p class="projeto-form__kanban-description">{{ lista.controls.descricao.value || 'Sem descrição' }}</p>
+
+                <div class="projeto-form__kanban-lane">
+                  <span>0 itens</span>
+                </div>
+              </article>
+            }
+          </div>
+        </section>
       </div>
     </div>
 
     <footer class="projeto-form__footer">
       <p-button label="Cancelar" severity="secondary" [text]="true" type="button" (onClick)="fechar()" />
       <p-button label="Salvar" icon="pi pi-check" type="submit" [loading]="salvando" />
+    </footer>
+  </form>
+</p-dialog>
+
+<p-dialog
+  [modal]="true"
+  [visible]="listaKanbanModalVisivel"
+  [showHeader]="false"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '32rem' }"
+  [breakpoints]="{ '767px': '94vw' }"
+  [contentStyle]="{ padding: '0' }"
+  (onHide)="fecharListaKanbanModal()"
+>
+  <form class="projeto-form" [formGroup]="listaKanbanForm" (ngSubmit)="salvarListaKanbanModal()">
+    <div class="projeto-form__topbar">
+      <span>{{ listaKanbanEdicaoIndex === null ? 'Nova lista' : 'Editar lista' }}</span>
+      <p-button icon="pi pi-times" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Fechar lista" type="button" (onClick)="fecharListaKanbanModal()" />
+    </div>
+
+    <div class="projeto-form__content lista-kanban-form__content">
+      <div class="projeto-form__field">
+        <label for="listaKanbanNome">Nome</label>
+        <input pInputText id="listaKanbanNome" formControlName="nome" placeholder="Nome da lista" />
+      </div>
+
+      <div class="projeto-form__field">
+        <label for="listaKanbanCor">Cor</label>
+        <input id="listaKanbanCor" class="lista-kanban-form__color-input" type="color" formControlName="cor" />
+      </div>
+
+      <div class="lista-kanban-form__swatches" aria-label="Cores rápidas">
+        @for (cor of coresListasKanban; track cor) {
+          <button
+            class="lista-kanban-form__swatch"
+            type="button"
+            [class.lista-kanban-form__swatch--selected]="listaKanbanForm.controls.cor.value === cor"
+            [style.background-color]="cor"
+            [attr.aria-label]="'Selecionar cor ' + cor"
+            (click)="listaKanbanForm.controls.cor.setValue(cor)"
+          ></button>
+        }
+      </div>
+
+      <div class="projeto-form__field">
+        <label for="listaKanbanDescricao">Descrição</label>
+        <textarea pTextarea id="listaKanbanDescricao" formControlName="descricao" rows="4" placeholder="Descrição da lista"></textarea>
+      </div>
+    </div>
+
+    <footer class="projeto-form__footer">
+      <p-button label="Cancelar" severity="secondary" [text]="true" type="button" (onClick)="fecharListaKanbanModal()" />
+      <p-button label="Salvar lista" icon="pi pi-check" type="submit" />
     </footer>
   </form>
 </p-dialog>
