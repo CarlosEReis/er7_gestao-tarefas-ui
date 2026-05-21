@@ -52,7 +52,7 @@
       <div class="ticket-form__quick-actions">
         <!--<p-button icon="pi pi-plus" label="Adicionar" severity="secondary" [outlined]="true" type="button" /> -->
         @if (!temEtiquetasSelecionadas) {
-          <p-button size="small" icon="pi pi-tag" label="Etiquetas" severity="secondary" [outlined]="true" type="button" (onClick)="etiquetasPopover.toggle($event)" />
+          <p-button size="small" icon="pi pi-tag" label="Etiquetas" severity="secondary" [outlined]="true" type="button" (onClick)="abrirEtiquetasPopover($event, etiquetasPopover)" />
         }
         @if (!temDatasSelecionadas) {
           <p-button size="small" icon="pi pi-clock" label="Datas" severity="secondary" [outlined]="true" type="button" (onClick)="datasPopover.toggle($event)" />
@@ -61,7 +61,7 @@
           <p-button size="small" icon="pi pi-check-square" label="Checklist" severity="secondary" [outlined]="true" type="button" (onClick)="checklistPopover.toggle($event)" />
         }
         @if (!temMembrosSelecionados) {
-          <p-button size="small" icon="pi pi-user-plus" label="Membros" severity="secondary" [outlined]="true" type="button" (onClick)="membrosPopover.toggle($event)" />
+          <p-button size="small" icon="pi pi-user-plus" label="Membros" severity="secondary" [outlined]="true" type="button" (onClick)="abrirMembrosPopover($event, membrosPopover)" />
         }
         @if (!temArquivos) {
           <p-button size="small" icon="pi pi-paperclip" label="Anexo" severity="secondary" [outlined]="true" type="button" [loading]="anexandoArquivos" [disabled]="anexandoArquivos" (onClick)="arquivoInput.click()" />
@@ -82,7 +82,7 @@
                     [ariaLabel]="membro.nome"
                   />
                 }
-                <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" severity="secondary" ariaLabel="Adicionar membro" type="button" (onClick)="membrosPopover.toggle($event)" />
+                <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" severity="secondary" ariaLabel="Adicionar membro" type="button" (onClick)="abrirMembrosPopover($event, membrosPopover)" />
               </div>
             </section>
           }
@@ -99,7 +99,7 @@
                     (onRemove)="removerEtiqueta(etiqueta.nome)"
                   />
                 }
-                <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" severity="secondary" ariaLabel="Adicionar etiqueta" type="button" (onClick)="etiquetasPopover.toggle($event)" />
+                <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" severity="secondary" ariaLabel="Adicionar etiqueta" type="button" (onClick)="abrirEtiquetasPopover($event, etiquetasPopover)" />
               </div>
             </section>
           }

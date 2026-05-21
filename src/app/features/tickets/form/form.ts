@@ -93,6 +93,10 @@ export class Form implements OnInit {
   criandoEtiqueta = false;
   private descricaoAntesEdicao = '';
   private descricaoHtmlAtual = '';
+  private usuariosCarregados = false;
+  private usuariosCarregando = false;
+  private etiquetasCarregadas = false;
+  private etiquetasCarregando = false;
 
   colunas: Option[] = [...TICKET_KANBAN_COLUMNS];
   membrosDisponiveis: Member[] = [];
@@ -126,9 +130,6 @@ export class Form implements OnInit {
   private ticketOriginal: Ticket | null = null;
 
   ngOnInit(): void {
-    this.carregarUsuarios();
-    this.carregarEtiquetas();
-
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       return;
@@ -136,7 +137,19 @@ export class Form implements OnInit {
 
     this.isEdicao = true;
     this.descricaoEmEdicao = false;
+    this.carregarUsuarios();
+    this.carregarEtiquetas();
     this.carregarTicket(id);
+  }
+
+  abrirMembrosPopover(event: Event, popover: Popover): void {
+    this.carregarUsuarios();
+    popover.toggle(event);
+  }
+
+  abrirEtiquetasPopover(event: Event, popover: Popover): void {
+    this.carregarEtiquetas();
+    popover.toggle(event);
   }
 
   adicionarEtiqueta(): void {
@@ -592,22 +605,46 @@ export class Form implements OnInit {
   }
 
   private carregarUsuarios(): void {
+    if (this.usuariosCarregados || this.usuariosCarregando) {
+      return;
+    }
+
+    this.usuariosCarregando = true;
     this.usuariosService.buscarUsuarios().subscribe({
       next: (usuarios) => {
         this.membrosDisponiveis = usuarios;
+        this.usuariosCarregados = true;
         if (this.ticketOriginal) {
           this.ticketForm.controls.membrosSelecionados.setValue(
             this.normalizarMembrosTicket(this.ticketOriginal.membros, this.ticketOriginal.desenvolvedor?.nome),
           );
         }
       },
+      error: () => {
+        this.usuariosCarregando = false;
+      },
+      complete: () => {
+        this.usuariosCarregando = false;
+      },
     });
   }
 
   private carregarEtiquetas(): void {
+    if (this.etiquetasCarregadas || this.etiquetasCarregando) {
+      return;
+    }
+
+    this.etiquetasCarregando = true;
     this.etiquetasService.buscarEtiquetas().subscribe({
       next: (etiquetas) => {
         this.etiquetasDisponiveis = etiquetas;
+        this.etiquetasCarregadas = true;
+      },
+      error: () => {
+        this.etiquetasCarregando = false;
+      },
+      complete: () => {
+        this.etiquetasCarregando = false;
       },
     });
   }
