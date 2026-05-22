@@ -39,6 +39,7 @@ export class Kanban implements OnInit {
   columns: KanbanColumn[] = [];
   checklistSummaries: Record<string, ChecklistSummary> = {};
   usuariosPorId: Record<string, Usuario> = {};
+  private readonly collapsedColumnKeys = new Set<string>();
   private currentTickets: Ticket[] = [];
   private projetos: Projeto[] = [];
   private projetosRequestVersion = 0;
@@ -91,6 +92,21 @@ export class Kanban implements OnInit {
 
   trackTicket(_index: number, ticket: Ticket): string {
     return ticket.id;
+  }
+
+  isColumnCollapsed(column: KanbanColumn): boolean {
+    return this.collapsedColumnKeys.has(this.columnKey(column));
+  }
+
+  toggleColumnCollapsed(column: KanbanColumn): void {
+    const columnKey = this.columnKey(column);
+
+    if (this.collapsedColumnKeys.has(columnKey)) {
+      this.collapsedColumnKeys.delete(columnKey);
+      return;
+    }
+
+    this.collapsedColumnKeys.add(columnKey);
   }
 
   getSeverityPriority(priority: string) {
@@ -275,6 +291,10 @@ export class Kanban implements OnInit {
 
   private defaultColumnColor(index: number): string {
     return ['#fef3c7', '#d1fae5', '#e0f2fe', '#fce7f3', '#ede9fe', '#dcfce7'][index] ?? '#f3f4f6';
+  }
+
+  private columnKey(column: KanbanColumn): string {
+    return column.id ?? column.value ?? column.label;
   }
 
   private recarregarProjetos(): void {

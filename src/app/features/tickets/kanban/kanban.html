@@ -1,108 +1,151 @@
 <div class="kanban-board" cdkDropListGroup>
   @for (column of columns; track column.id ?? column.value) {
-    <section class="kanban-column">
-      <header class="kanban-column__header" [style.--kanban-column-header-bg]="column.cor">
-        <div>
-          <span class="kanban-column__title">{{ column.label }}</span>
-          <span class="kanban-column__count">{{ column.tickets.length }}</span>
+    <section class="kanban-column" [class.kanban-column--collapsed]="isColumnCollapsed(column)">
+      @if (isColumnCollapsed(column)) {
+        <header class="kanban-column__collapsed-header" [style.--kanban-column-header-bg]="column.cor">
+          <span class="kanban-column__count kanban-column__collapsed-count">{{ column.tickets.length }}</span>
+        </header>
+
+        <div class="kanban-column__collapsed-body" [pTooltip]="column.label" tooltipPosition="right">
+          <p-button
+            icon="pi pi-plus"
+            [text]="true"
+            [rounded]="true"
+            severity="secondary"
+            size="small"
+            routerLink="novo"
+            ariaLabel="Adicionar um cartão"
+            pTooltip="Adicionar um cartão"
+          />
+
+          <p-button
+            icon="pi pi-eye-slash"
+            [text]="true"
+            [rounded]="true"
+            severity="secondary"
+            size="small"
+            ariaLabel="Expandir lista"
+            pTooltip="Expandir lista"
+            (onClick)="toggleColumnCollapsed(column)"
+          />
         </div>
+      } @else {
+        <header class="kanban-column__header" [style.--kanban-column-header-bg]="column.cor">
+          <div>
+            <span class="kanban-column__title">{{ column.label }}</span>
+            <span class="kanban-column__count">{{ column.tickets.length }}</span>
+          </div>
 
-        <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary" size="small" ariaLabel="Opções da lista" />
-      </header>
+          <div class="kanban-column__actions">
+            <p-button
+              icon="pi pi-eye-slash"
+              [text]="true"
+              [rounded]="true"
+              severity="secondary"
+              size="small"
+              ariaLabel="Minimizar lista"
+              pTooltip="Minimizar lista"
+              (onClick)="toggleColumnCollapsed(column)"
+            />
 
-      <div
-        cdkDropList
-        [cdkDropListData]="column.tickets"
-        class="kanban-column__tickets"
-        [attr.aria-label]="column.label"
-        (cdkDropListDropped)="drop($event, column)"
-      >
-        @for (ticket of column.tickets; track trackTicket($index, ticket)) {
-          <article class="ticket-card" cdkDrag [cdkDragData]="ticket">
-            <div class="ticket-card__labels" aria-hidden="true">
-              @if (ticket.etiquetas?.length) {
-                @for (label of ticket.etiquetas?.slice(0, 5); track label; let index = $index) {
-                  <span [style.background-color]="labelColor(label, index)"></span>
+            <p-button icon="pi pi-ellipsis-h" [text]="true" [rounded]="true" severity="secondary" size="small" ariaLabel="Opções da lista" />
+          </div>
+        </header>
+
+        <div
+          cdkDropList
+          [cdkDropListData]="column.tickets"
+          class="kanban-column__tickets"
+          [attr.aria-label]="column.label"
+          (cdkDropListDropped)="drop($event, column)"
+        >
+          @for (ticket of column.tickets; track trackTicket($index, ticket)) {
+            <article class="ticket-card" cdkDrag [cdkDragData]="ticket">
+              <div class="ticket-card__labels" aria-hidden="true">
+                @if (ticket.etiquetas?.length) {
+                  @for (label of ticket.etiquetas?.slice(0, 5); track label; let index = $index) {
+                    <span [style.background-color]="labelColor(label, index)"></span>
+                  }
+                } @else {
+                  <span></span>
                 }
-              } @else {
-                <span></span>
-              }
-            </div>
+              </div>
 
-            <div class="ticket-card__title-row">
-              <a class="ticket-card__title" [routerLink]="[ticket.id, 'detalhe']">
-                {{ ticket.titulo }}
-              </a>
+              <div class="ticket-card__title-row">
+                <a class="ticket-card__title" [routerLink]="[ticket.id, 'detalhe']">
+                  {{ ticket.titulo }}
+                </a>
 
-              <p-button
-                icon="pi pi-pencil"
-                [text]="true"
-                [rounded]="true"
-                severity="secondary"
-                size="small"
-                [routerLink]="[ticket.id, 'detalhe']"
-                ariaLabel="Editar ticket"
-              />
-            </div>
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="secondary"
+                  size="small"
+                  [routerLink]="[ticket.id, 'detalhe']"
+                  ariaLabel="Editar ticket"
+                />
+              </div>
 
-            <div class="ticket-card__meta">
-              <!--<span pTooltip="Ticket"><i class="pi pi-eye" aria-hidden="true"></i>{{ ticket.ticketId }}</span>-->
-              <span pTooltip="Prazo"><i class="pi pi-clock" aria-hidden="true"></i>{{ dateLabel(ticket) }}</span>
-              @if (hasDescription(ticket)) {
-                <span pTooltip="Este cartão tem uma descrição"><i class="pi pi-align-left" aria-hidden="true"></i></span>
-              }
+              <div class="ticket-card__meta">
+                <!--<span pTooltip="Ticket"><i class="pi pi-eye" aria-hidden="true"></i>{{ ticket.ticketId }}</span>-->
+                <span pTooltip="Prazo"><i class="pi pi-clock" aria-hidden="true"></i>{{ dateLabel(ticket) }}</span>
+                @if (hasDescription(ticket)) {
+                  <span pTooltip="Este cartão tem uma descrição"><i class="pi pi-align-left" aria-hidden="true"></i></span>
+                }
                 @if (checklistSummary(ticket).total > 0) {
                   <span pTooltip="Checklist"><i class="pi pi-check-square" aria-hidden="true"></i>{{ checklistSummary(ticket).done }}/{{ checklistSummary(ticket).total }}</span>
                 }
-            </div>
-
-            <div class="ticket-card__tags">
-              <p-tag [value]="ticket.tipo" [severity]="getSeverityType(ticket.tipo)" />
-              <p-tag [value]="ticket.prioridade" [severity]="getSeverityPriority(ticket.prioridade)" />
-            </div>
-
-            <footer class="ticket-card__footer">
-              <div class="ticket-card__stats">
-                @let members = memberAvatars(ticket);
-                @if (members.length > 0) {
-                  <div class="ticket-card__members" aria-label="Membros do ticket">
-                    @for (member of members; track trackMember($index, member)) {
-                      <p-avatar
-                        [image]="member.foto"
-                        [ariaLabel]="member.nome"
-                        [pTooltip]="member.nome"
-                        shape="circle"
-                      />
-                    }
-                  </div>
-                } @else {
-                  <span pTooltip="Membros"><i class="pi pi-users" aria-hidden="true"></i>{{ membersCount(ticket) }}</span>
-                }
-
-                <!--<span pTooltip="Branch"><i class="pi pi-code-branch" aria-hidden="true"></i>{{ ticket.branch }}</span>-->
               </div>
 
-              <p-avatar
-                [image]="ticket.desenvolvedor.foto"
-                [ariaLabel]="ticket.desenvolvedor.nome"
-                [pTooltip]="ticket.desenvolvedor.nome"
-                shape="circle"
-              />
-            </footer>
-          </article>
-        } @empty {
-          <div class="kanban-column__empty">Sem tickets</div>
-        }
-      </div>
+              <div class="ticket-card__tags">
+                <p-tag [value]="ticket.tipo" [severity]="getSeverityType(ticket.tipo)" />
+                <p-tag [value]="ticket.prioridade" [severity]="getSeverityPriority(ticket.prioridade)" />
+              </div>
 
-      <p-button
-        class="kanban-column__add"
-        icon="pi pi-plus"
-        label="Adicionar um cartão"
-        [text]="true"
-        severity="secondary"
-        routerLink="novo"
-      />
+              <footer class="ticket-card__footer">
+                <div class="ticket-card__stats">
+                  @let members = memberAvatars(ticket);
+                  @if (members.length > 0) {
+                    <div class="ticket-card__members" aria-label="Membros do ticket">
+                      @for (member of members; track trackMember($index, member)) {
+                        <p-avatar
+                          [image]="member.foto"
+                          [ariaLabel]="member.nome"
+                          [pTooltip]="member.nome"
+                          shape="circle"
+                        />
+                      }
+                    </div>
+                  } @else {
+                    <span pTooltip="Membros"><i class="pi pi-users" aria-hidden="true"></i>{{ membersCount(ticket) }}</span>
+                  }
+
+                  <!--<span pTooltip="Branch"><i class="pi pi-code-branch" aria-hidden="true"></i>{{ ticket.branch }}</span>-->
+                </div>
+
+                <p-avatar
+                  [image]="ticket.desenvolvedor.foto"
+                  [ariaLabel]="ticket.desenvolvedor.nome"
+                  [pTooltip]="ticket.desenvolvedor.nome"
+                  shape="circle"
+                />
+              </footer>
+            </article>
+          } @empty {
+            <div class="kanban-column__empty">Sem tickets</div>
+          }
+        </div>
+
+        <p-button
+          class="kanban-column__add"
+          icon="pi pi-plus"
+          label="Adicionar um cartão"
+          [text]="true"
+          severity="secondary"
+          routerLink="novo"
+        />
+      }
     </section>
   }
 </div>
