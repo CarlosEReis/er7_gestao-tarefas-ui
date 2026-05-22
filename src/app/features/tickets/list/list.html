@@ -4,7 +4,8 @@
       <th style="width:5%">Ticket</th>
       <th style="width:5%">Abertura</th>
       <th style="width:3%">Desenv.</th>
-      <th style="width:30%">Título</th>
+      <th style="width:24%">Título</th>
+      <th style="width:7%" class="tickets-list__members-header">Membros</th>
       <th>Projeto</th>
       <th>Tipo</th>
       <th>Priori</th>
@@ -21,6 +22,18 @@
         <p-avatar [image]="ticket.desenvolvedor.foto" pTooltip="{{ ticket.desenvolvedor.nome }}" shape="circle" style="vertical-align: middle"/>
       </td>
       <td>{{ ticket.titulo }}</td>
+      <td>
+        <div class="tickets-list__members" aria-label="Membros do ticket">
+          @for (member of memberAvatars(ticket); track trackMember($index, member)) {
+            <p-avatar
+              [image]="member.foto"
+              [ariaLabel]="member.nome"
+              [pTooltip]="member.nome"
+              shape="circle"
+            />
+          }
+        </div>
+      </td>
       <td>{{ ticket.projeto }}</td>
       <td>
         <p-tag [value]="ticket.tipo" [severity]="getSeverityType(ticket.tipo)" />

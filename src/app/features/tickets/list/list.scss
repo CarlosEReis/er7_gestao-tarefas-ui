@@ -2,3 +2,23 @@
   color: var(--p-surface-800);
   font-weight: 500;
 }
+
+.tickets-list__members-header {
+  text-align: right;
+}
+
+.tickets-list__members {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  min-height: 2rem;
+  padding-left: 0.35rem;
+}
+
+.tickets-list__members p-avatar {
+  margin-left: -0.35rem;
+}
+
+.tickets-list__members p-avatar:first-child {
+  margin-left: 0;
+}

@@ -7,6 +7,7 @@ import { Button } from 'primeng/button';
 import { RouterLink } from '@angular/router';
 import { Projeto, ProjetosService } from '../../projetos/projetos-service';
 import { Ticket } from '../tickets-service';
+import { Usuario, UsuariosService } from '../usuarios-service';
 
 @Component({
   selector: 'app-list',
@@ -17,11 +18,25 @@ import { Ticket } from '../tickets-service';
 export class List implements OnInit {
 
   private readonly projetosService = inject(ProjetosService);
+  private readonly usuariosService = inject(UsuariosService);
 
   tickets = input<Ticket[]>([]);
+  usuariosPorId: Record<string, Usuario> = {};
   private statusColorsByProject: Record<string, Record<string, string>> = {};
 
   ngOnInit(): void {
+    this.usuariosService.buscarUsuarios().subscribe((usuarios) => {
+      this.usuariosPorId = usuarios.reduce<Record<string, Usuario>>((acc, usuario) => {
+        acc[usuario.id] = usuario;
+
+        if (usuario.legadoId) {
+          acc[String(usuario.legadoId)] = usuario;
+        }
+
+        return acc;
+      }, {});
+    });
+
     this.projetosService.buscarProjetos().subscribe((projetos) => {
       this.statusColorsByProject = projetos.reduce<Record<string, Record<string, string>>>((acc, projeto) => {
         const colors = this.statusColorsFromProject(projeto);
@@ -32,6 +47,16 @@ export class List implements OnInit {
         return acc;
       }, {});
     });
+  }
+
+  memberAvatars(ticket: Ticket): Usuario[] {
+    return (ticket.membros ?? [])
+      .map((memberId) => this.usuariosPorId[String(memberId)])
+      .filter((usuario): usuario is Usuario => !!usuario);
+  }
+
+  trackMember(_index: number, member: Usuario): string {
+    return member.id;
   }
 
   getSeverityPriority(status: string) {
